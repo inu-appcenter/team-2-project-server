@@ -5,6 +5,7 @@
 .DS_Store
 .gradle/
 build/
+out/
 
 # Local Spring configuration with secrets
 application*.yml
