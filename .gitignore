@@ -1,22 +1,13 @@
 .idea/*
 .idea/
 *.xml
-*.md
 *.toml
 .DS_Store
 .gradle/
 build/
 
 # Local Spring configuration with secrets
-src/main/resources/application.properties
-src/main/resources/application.yml
-src/main/resources/application.yaml
-src/main/resources/application-*.properties
-src/main/resources/application-*.yml
-src/main/resources/application-*.yaml
-!src/main/resources/application-example.properties
-!src/main/resources/application-example.yml
-!src/main/resources/application-example.yaml
+application*.yml
 
 # Environment files
 .env
@@ -26,3 +17,7 @@ src/main/resources/application-*.yaml
 # Logs
 logs/
 *.log
+
+# Aigent
+AGENTS.md
+SKILL.md
