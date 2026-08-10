@@ -30,6 +30,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
 }
 
 tasks.named('test') {
