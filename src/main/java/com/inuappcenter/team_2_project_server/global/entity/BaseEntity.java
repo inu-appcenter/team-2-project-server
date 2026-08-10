@@ -1,4 +1,4 @@
-package com.inuappcenter.team_2_project_server.global.error;
+package com.inuappcenter.team_2_project_server.global.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
