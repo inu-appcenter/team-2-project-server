@@ -1,4 +1,23 @@
 .idea/*
+.idea/
 *.xml
-*.md
 *.toml
+.DS_Store
+.gradle/
+build/
+
+# Local Spring configuration with secrets
+application*.yml
+
+# Environment files
+.env
+.env.*
+*.env
+
+# Logs
+logs/
+*.log
+
+# Aigent
+AGENTS.md
+SKILL.md
