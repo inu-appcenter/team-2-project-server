@@ -13,10 +13,10 @@ public record ResponseDto<T>(
         return new ResponseDto<>(data, code, message);
     }
 
-    
-    // 메시지가 없는 응답 팩토리 메서드
-    public static <T> ResponseDto<T> of(T data, String code) {
-        return new ResponseDto<>(data, code, null);
+
+    // 코드가 없는 응답 팩토리 메서드(일반적인 성공 응답)
+    public static <T> ResponseDto<T> of(T data, String message) {
+        return new ResponseDto<>(data, null, message);
     }
 
 
