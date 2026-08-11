@@ -21,6 +21,9 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    /**
+     * 로그인 컨트롤러
+     */
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<LoginResponseDto>> login(
             @Valid @RequestBody LoginRequestDto request
@@ -29,7 +32,7 @@ public class MemberController {
         LoginResponseDto response = memberService.login(request);
 
         return ResponseEntity.ok(
-                ResponseDto.of(response, "SUCCESS", "로그인 성공")
+                ResponseDto.of(response, "로그인 성공")
         );
     }
 }
