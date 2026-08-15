@@ -2,6 +2,9 @@ package com.inuappcenter.team_2_project_server.global.dto;
 
 import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
 
+/**
+ * 일관된 응답을 위한 전역 DTO
+ */
 public record ResponseDto<T>(
         T data,
         String code,

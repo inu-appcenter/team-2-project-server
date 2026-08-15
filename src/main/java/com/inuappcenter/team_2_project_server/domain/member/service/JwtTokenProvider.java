@@ -17,12 +17,16 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+/**
+ * JWT를 만들고, 꺼내고, 검증하고, 해석하는 클래스
+ */
 @Component
 public class JwtTokenProvider {
 
-    private static final String TOKEN_TYPE_CLAIM = "tokenType";
-    private static final String ACCESS_TOKEN_TYPE = "ACCESS";
-    private static final String REFRESH_TOKEN_TYPE = "REFRESH";
+    private static final String TOKEN_TYPE_CLAIM = "tokenType";     // JWT 내부에 access token과 refresh token을 구분하기 위한 claim 이름
+    private static final String ACCESS_TOKEN_TYPE = "ACCESS";       // 보호 API 인증에 사용할 수 있는 토큰 타입
+    private static final String REFRESH_TOKEN_TYPE = "REFRESH";     // access token 재발급에만 사용할 토큰 타입
+
     private final SecretKey secretKey;
     private final long accessTokenExpirationMillis;
     private final long refreshTokenExpirationMillis;

@@ -16,6 +16,9 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+/**
+ * 매 요청마다 실행되는 JWT 인증 필터
+ */
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -52,9 +55,10 @@ public class JwtFilter extends OncePerRequestFilter {
                                 userDetails.getAuthorities()
                         );
 
-                // 현재 요청을 인증된 사용자 요청으로 등록
+                // 현재 요청을 인증된 사용자 요청으로 등록(이 코드를 통해 Spring Security는 현재 요청을 인증된 요청으로 인식)
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
+            
             // 다음 필터 또는 컨트롤러로 요청을 넘김
             filterChain.doFilter(request, response);
         } catch (MyException e) {
