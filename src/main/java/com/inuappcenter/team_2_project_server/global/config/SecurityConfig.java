@@ -43,8 +43,8 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
                         // 최우선 허용
-                        .requestMatchers("/api/user/login").permitAll()
-                        .anyRequest().permitAll());
+                        .requestMatchers("/api/member/login").permitAll()
+                        .anyRequest().authenticated());
 
         return httpSecurity.build();
     }
