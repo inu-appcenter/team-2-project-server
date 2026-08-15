@@ -3,6 +3,7 @@ package com.inuappcenter.team_2_project_server.domain.member.service;
 import com.inuappcenter.team_2_project_server.domain.member.entity.Member;
 import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
 import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -19,10 +20,13 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
+    private static final String TOKEN_TYPE_CLAIM = "tokenType";
+    private static final String ACCESS_TOKEN_TYPE = "ACCESS";
+    private static final String REFRESH_TOKEN_TYPE = "REFRESH";
     private final SecretKey secretKey;
-
     private final long accessTokenExpirationMillis;
     private final long refreshTokenExpirationMillis;
+
 
     public JwtTokenProvider(
             SecretKey secretKey,
@@ -44,6 +48,7 @@ public class JwtTokenProvider {
         // 토큰에 member_id, studentNumber, 권한 등을 넣어서 생성
         return Jwts.builder()
                 .subject(member.getId().toString())
+                .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
                 .claim("studentNumber", member.getStudentNumber())
                 .claim("role", member.getRole())
                 .issuedAt(Date.from(now))
@@ -61,6 +66,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .subject(member.getId().toString())
+                .claim(TOKEN_TYPE_CLAIM, REFRESH_TOKEN_TYPE)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiration))
                 .signWith(secretKey)
@@ -108,38 +114,44 @@ public class JwtTokenProvider {
      * 토큰 검증 메서드
      */
     public void validateAccessToken(String token) {
+        Claims claims = parseClaims(token);
+
+        String tokenType = claims.get(TOKEN_TYPE_CLAIM, String.class);
+        if (!ACCESS_TOKEN_TYPE.equals(tokenType)) {
+            throw new MyException(ErrorCode.TOKEN_INVALID);
+        }
+    }
+
+    // claim 파싱
+    private Claims parseClaims(String token) {
         if (token == null || token.isBlank()) {
             throw new MyException(ErrorCode.TOKEN_MISSING);
         }
+
         try {
-            // JWT parser 설정 시작
-            Jwts.parser()
-                    // secretKey로 만들어졌는지 서명 검증
+            return Jwts.parser()
+                    // JWT parser 설정 시작
                     .verifyWith(secretKey)
 
                     // Jwts.parser()의 반환값은 builder으므로 build()를 해야 위 설정이 반영된 실제 parser 생성
                     .build()
 
                     // JWT 형식, 서명, 만료시간, claims 등을 검증
-                    .parseSignedClaims(token);
-
-        } catch (IllegalArgumentException e) {
-            throw new MyException(ErrorCode.INVALID_INPUT);
+                    .parseSignedClaims(token)
+                    .getPayload();
         } catch (ExpiredJwtException e) {
             throw new MyException(ErrorCode.TOKEN_EXPIRED);
-        } catch (JwtException e) {
+        } catch (JwtException | IllegalArgumentException e) {
             throw new MyException(ErrorCode.TOKEN_INVALID);
         }
     }
 
+    // memberId 파싱
     public Long getMemberId(String token) {
-        String subject = Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
-
-        return Long.valueOf(subject);
+        try {
+            return Long.valueOf(parseClaims(token).getSubject());
+        } catch (NumberFormatException e) {
+            throw new MyException(ErrorCode.TOKEN_INVALID);
+        }
     }
 }
