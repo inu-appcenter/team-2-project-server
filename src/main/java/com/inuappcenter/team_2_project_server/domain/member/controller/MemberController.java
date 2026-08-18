@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/member")
-public class MemberController {
+public class MemberController implements MemberApiSpecification {
 
     private final MemberService memberService;
 

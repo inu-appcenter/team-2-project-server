@@ -22,6 +22,9 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final ObjectMapper objectMapper;
 
+    /**
+     * 모든 요청이 이 security 필터 체인을 거쳐감
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
@@ -43,6 +46,8 @@ public class SecurityConfig {
         // api 인증
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
                         // 최우선 허용
                         .requestMatchers("/api/member/login").permitAll()
 
