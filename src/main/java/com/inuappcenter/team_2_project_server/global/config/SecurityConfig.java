@@ -5,6 +5,7 @@ import com.inuappcenter.team_2_project_server.domain.member.service.JwtTokenProv
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -44,6 +45,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 최우선 허용
                         .requestMatchers("/api/member/login").permitAll()
+
+                        // 관리자 전용
+                        .requestMatchers(HttpMethod.GET, "/api/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         return httpSecurity.build();
