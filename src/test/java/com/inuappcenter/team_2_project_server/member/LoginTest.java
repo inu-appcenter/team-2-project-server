@@ -1,7 +1,7 @@
 package com.inuappcenter.team_2_project_server.member;
 
-import com.inuappcenter.team_2_project_server.domain.member.dto.LoginRequestDto;
-import com.inuappcenter.team_2_project_server.domain.member.dto.LoginResponseDto;
+import com.inuappcenter.team_2_project_server.domain.member.dto.request.LoginRequestDto;
+import com.inuappcenter.team_2_project_server.domain.member.dto.response.LoginResponseDto;
 import com.inuappcenter.team_2_project_server.domain.member.entity.Member;
 import com.inuappcenter.team_2_project_server.domain.member.repository.MemberRepository;
 import com.inuappcenter.team_2_project_server.domain.member.repository.SchoolAuthRepository;
@@ -19,9 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class LoginTest {
 
@@ -41,7 +39,7 @@ class LoginTest {
     @Test
     void login_succeeds_with_existing_member() {
         LoginRequestDto request = new LoginRequestDto("20240001", "password");
-        Member member = Member.create("20240001");
+        Member member = Member.create("20240001", null, null, null);
 
         given(schoolAuthRepository.verify("20240001", "password")).willReturn(true);
         given(memberRepository.findByStudentNumber("20240001")).willReturn(Optional.of(member));
@@ -62,7 +60,7 @@ class LoginTest {
     @Test
     void login_creates_member_when_school_auth_succeeds_and_member_does_not_exist() {
         LoginRequestDto request = new LoginRequestDto("20240002", "password");
-        Member savedMember = Member.create("20240002");
+        Member savedMember = Member.create("20240002", null, null, null);
 
         given(schoolAuthRepository.verify("20240002", "password")).willReturn(true);
         given(memberRepository.findByStudentNumber("20240002")).willReturn(Optional.empty());
