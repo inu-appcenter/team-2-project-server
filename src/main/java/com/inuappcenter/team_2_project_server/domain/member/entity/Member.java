@@ -69,6 +69,15 @@ public class Member extends BaseEntity implements UserDetails {
         return new Member(studentNumber, nickName, department, email, LocalDateTime.now(), "ROLE_USER");
     }
 
+    public static Member createAdmin(
+            String studentNumber,
+            String nickName,
+            Department department,
+            String email
+    ) {
+        return new Member(studentNumber, nickName, department, email, LocalDateTime.now(), "ROLE_ADMIN");
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role));
@@ -103,7 +112,6 @@ public class Member extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 
     public void updateMemberProfile(
             String nickName,

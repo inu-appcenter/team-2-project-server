@@ -40,8 +40,17 @@ public class MemberService {
         }
 
         Member member = memberRepository.findByStudentNumber(studentNumber)
-                .orElseGet(() -> memberRepository.save(Member.create(studentNumber, studentNumber, null, null)));
+                .orElseGet(() -> {
+                    if ("local_admin".equals(studentNumber)) {
+                        return memberRepository.save(
+                                Member.createAdmin(studentNumber, studentNumber, null, null)
+                        );
+                    }
 
+                    return memberRepository.save(
+                            Member.create(studentNumber, studentNumber, null, null)
+                    );
+                });
         String accessToken = jwtTokenProvider.createAccessToken(member);
         String refreshToken = jwtTokenProvider.createRefreshToken(member);
 

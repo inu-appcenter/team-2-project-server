@@ -13,6 +13,7 @@ public class StubSchoolAuthRepository implements SchoolAuthRepository {
 
     @Override
     public boolean verify(String studentId, String password) {
-        return "test".equals(studentId) && "test".equals(password);
+        return "local_user".equals(studentId) && "local_user".equals(password)
+                || ("local_admin".equals(studentId) && "local_admin".equals(password));
     }
 }
