@@ -47,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/member/login").permitAll()
 
                         // 관리자 전용
-                        .requestMatchers(HttpMethod.GET, "/api/member/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/member", "/api/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         return httpSecurity.build();
