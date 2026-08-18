@@ -5,12 +5,14 @@ import com.inuappcenter.team_2_project_server.domain.member.dto.request.MemberCr
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.MemberUpdateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.LoginResponseDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.MemberResponseDto;
+import com.inuappcenter.team_2_project_server.domain.member.entity.Member;
 import com.inuappcenter.team_2_project_server.domain.member.service.MemberService;
 import com.inuappcenter.team_2_project_server.global.dto.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,6 +61,9 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.of(responses, "전체 유저 조회 성공"));
     }
 
+    /**
+     * 유저 단일 조회 컨트롤러
+     */
     @GetMapping("/{memberId}")
     public ResponseEntity<ResponseDto<MemberResponseDto>> getMember(
             @PathVariable Long memberId
@@ -71,12 +76,12 @@ public class MemberController {
     /**
      * 유저 프로필 수정 컨트롤러
      */
-    @PatchMapping("/{memberId}")
+    @PatchMapping
     public ResponseEntity<ResponseDto<MemberResponseDto>> updateMember(
-            @PathVariable Long memberId,
+            @AuthenticationPrincipal Member member,
             @RequestBody MemberUpdateRequestDto request
     ) {
-        MemberResponseDto response = memberService.updateMemberProfile(memberId, request);
+        MemberResponseDto response = memberService.updateMemberProfile(member.getId(), request);
 
         return ResponseEntity.ok(ResponseDto.of(response, "유저 프로필 수정 성공"));
     }
@@ -84,11 +89,11 @@ public class MemberController {
     /**
      * 유저 삭제 컨트롤러
      */
-    @DeleteMapping("/{memberId}")
+    @DeleteMapping
     public ResponseEntity<ResponseDto<Long>> deleteMember(
-            @PathVariable Long memberId
+            @AuthenticationPrincipal Member member
     ) {
-        memberService.deleteMember(memberId);
-        return ResponseEntity.ok(ResponseDto.of(memberId, "유저 삭제 성공"));
+        memberService.deleteMember(member.getId());
+        return ResponseEntity.ok(ResponseDto.of(member.getId(), "유저 삭제 성공"));
     }
 }
