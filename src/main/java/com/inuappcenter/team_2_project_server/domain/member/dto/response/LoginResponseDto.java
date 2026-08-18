@@ -1,4 +1,4 @@
-package com.inuappcenter.team_2_project_server.domain.member.dto;
+package com.inuappcenter.team_2_project_server.domain.member.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
