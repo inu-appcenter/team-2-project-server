@@ -61,9 +61,12 @@ public class Member extends BaseEntity implements UserDetails {
     }
 
     public static Member create(
-            String studentNumber
+            String studentNumber,
+            String nickName,
+            Department department,
+            String email
     ) {
-        return new Member(studentNumber, studentNumber, null, null, LocalDateTime.now(), "ROLE_USER");
+        return new Member(studentNumber, nickName, department, email, LocalDateTime.now(), "ROLE_USER");
     }
 
     @Override
@@ -99,5 +102,22 @@ public class Member extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+
+    public void updateMemberProfile(
+            String nickName,
+            Department department,
+            String email
+    ) {
+        if (nickName != null) {
+            this.nickName = nickName;
+        }
+        if (department != null) {
+            this.department = department;
+        }
+        if (email != null) {
+            this.email = email;
+        }
     }
 }
