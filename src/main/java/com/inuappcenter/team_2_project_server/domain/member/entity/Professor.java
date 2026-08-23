@@ -1,31 +1,68 @@
 package com.inuappcenter.team_2_project_server.domain.member.entity;
 
-import com.inuappcenter.team_2_project_server.domain.member.ProfessorPosition;
+import com.inuappcenter.team_2_project_server.domain.department.College;
+import com.inuappcenter.team_2_project_server.domain.department.Department;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table
+@Table(
+        name = "professor",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_professor_department_name_email",
+                        columnNames = {"department", "name", "email"}
+                )
+        }
+)
 public class Professor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "professor_position")
-    ProfessorPosition professorPosition;
+    @Column(name = "position_raw")
+    String positionRaw;
+
+    @Enumerated(EnumType.STRING)
+    College college;
+
+    @Enumerated(EnumType.STRING)
+    Department department;
 
     @Column(nullable = false)
     String name;
 
-    private Professor(String name, ProfessorPosition professorPosition) {
+    @Column(name = "phone_number")
+    String phoneNumber;
+
+    String email;
+
+    private Professor(
+            String name,
+            String positionRaw,
+            College college,
+            Department department,
+            String phoneNumber,
+            String email
+    ) {
         this.name = name;
-        this.professorPosition = professorPosition;
+        this.positionRaw = positionRaw;
+        this.college = college;
+        this.department = department;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
     }
 
-    public static Professor create(String name, ProfessorPosition professorPosition) {
-        return new Professor(name, professorPosition);
+    public static Professor create(
+            String name,
+            String positionRaw,
+            College college,
+            Department department,
+            String phoneNumber,
+            String email) {
+        return new Professor(name, positionRaw, college, department, phoneNumber, email);
     }
 }
