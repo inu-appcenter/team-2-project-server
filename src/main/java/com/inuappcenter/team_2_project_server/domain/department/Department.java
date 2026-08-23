@@ -1,7 +1,11 @@
 package com.inuappcenter.team_2_project_server.domain.department;
 
+import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
+import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -104,4 +108,10 @@ public enum Department {
     private final String departmentName;    // 학과명
     private final College collegeName;      // 단과대명
 
+    public static Department fromDepartmentName(String parsedDepartmentName) {
+        return Arrays.stream(values())
+                .filter(college -> college.departmentName.equals(parsedDepartmentName))
+                .findFirst()
+                .orElseThrow(() -> new MyException(ErrorCode.INVALID_INPUT));
+    }
 }

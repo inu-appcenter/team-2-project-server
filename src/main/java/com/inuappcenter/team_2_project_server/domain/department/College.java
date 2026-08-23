@@ -1,7 +1,11 @@
 package com.inuappcenter.team_2_project_server.domain.department;
 
+import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
+import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -23,4 +27,11 @@ public enum College {
     ;
 
     private final String collegeName;
+
+    public static College fromCollegeName(String parsedCollegeName) {
+        return Arrays.stream(values())
+                .filter(college -> college.collegeName.equals(parsedCollegeName))
+                .findFirst()
+                .orElseThrow(() -> new MyException(ErrorCode.INVALID_INPUT));
+    }
 }

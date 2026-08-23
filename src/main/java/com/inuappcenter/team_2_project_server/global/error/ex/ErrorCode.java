@@ -20,7 +20,10 @@ public enum ErrorCode {
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "TOKEN_INVALID", "유효하지 않은 토큰입니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "접근 권한이 없습니다."),
 
-    RESEARCH_KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "RESEARCH_KEYWORD_NOT_FOUND", "검색 키워드가 존재하지 않습니다.");
+    RESEARCH_KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "RESEARCH_KEYWORD_NOT_FOUND", "검색 키워드가 존재하지 않습니다."),
+    EMPTY_EXCEL_FILE(HttpStatus.BAD_REQUEST, "EMPTY_EXCEL_FILE", "빈 엑셀 파일입니다."),
+    NOT_FILE_EXTENDER(HttpStatus.BAD_REQUEST, "NOT_FILE_EXTENDER", "지원하지 않는 파일 확장자입니다."),
+    ;
 
     private final HttpStatus status;
     private final String code;
