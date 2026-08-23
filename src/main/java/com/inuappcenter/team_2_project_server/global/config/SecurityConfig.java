@@ -53,6 +53,7 @@ public class SecurityConfig {
 
                         // 관리자 전용
                         .requestMatchers(HttpMethod.GET, "/api/member", "/api/member/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/laboratory/import").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         return httpSecurity.build();
