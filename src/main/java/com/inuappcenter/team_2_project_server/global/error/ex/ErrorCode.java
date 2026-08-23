@@ -19,7 +19,18 @@ public enum ErrorCode {
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "TOKEN_EXPIRED", "만료된 토큰입니다."),
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "TOKEN_INVALID", "유효하지 않은 토큰입니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "접근 권한이 없습니다."),
-    ;
+
+    RESEARCH_KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "RESEARCH_KEYWORD_NOT_FOUND", "검색 키워드가 존재하지 않습니다."),
+    EMPTY_EXCEL_FILE(HttpStatus.BAD_REQUEST, "EMPTY_EXCEL_FILE", "빈 엑셀 파일입니다."),
+    NOT_FILE_EXTENDER(HttpStatus.BAD_REQUEST, "NOT_FILE_EXTENDER", "지원하지 않는 파일 확장자입니다."),
+    DUPLICATED_LABORATORY(HttpStatus.BAD_REQUEST, "DUPLICATED_LAB", "중복된 연구실입니다."),
+    INVALID_EXCEL_FILE(HttpStatus.BAD_REQUEST, "INVALID_EXCEL_FILE", "올바른 엑셀 파일이 아닙니다."),
+    INVALID_EXCEL_SHEET(HttpStatus.BAD_REQUEST, "INVALID_EXCEL_SHEET", "엑셀 시트 형식이 올바르지 않습니다."),
+    INVALID_EXCEL_HEADER(HttpStatus.BAD_REQUEST, "INVALID_EXCEL_HEADER", "엑셀 헤더 형식이 올바르지 않습니다."),
+    INVALID_EXCEL_ROW(HttpStatus.BAD_REQUEST, "INVALID_EXCEL_ROW", "엑셀 행 데이터가 올바르지 않습니다."),
+    PROFESSOR_NOT_FOUND_IN_EXCEL(HttpStatus.BAD_REQUEST, "PROFESSOR_NOT_FOUND_IN_EXCEL", "연구실 시트의 교수를 교수정보 시트에서 찾을 수 없습니다."),
+    PROFESSOR_NOT_FOUND(HttpStatus.BAD_REQUEST, "PROFESSOR_NOT_FOUND", "존재하지 않는 교수입니다."),
+    DUPLICATED_PROFESSOR_IN_EXCEL(HttpStatus.BAD_REQUEST, "DUPLICATED_PROFESSOR_IN_EXCEL", "엑셀 시트에 동일한 교수가 존재합니다.");
 
     private final HttpStatus status;
     private final String code;
