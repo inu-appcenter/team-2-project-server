@@ -1,5 +1,6 @@
 package com.inuappcenter.team_2_project_server.member;
 
+import com.inuappcenter.team_2_project_server.domain.member.dto.LocalAuthLoginDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.LoginRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.LoginResponseDto;
 import com.inuappcenter.team_2_project_server.domain.member.entity.Member;
@@ -41,7 +42,8 @@ class LoginTest {
         LoginRequestDto request = new LoginRequestDto("20240001", "password");
         Member member = Member.create("20240001", null, null, null);
 
-        given(schoolAuthRepository.verify("20240001", "password")).willReturn(true);
+        given(schoolAuthRepository.authenticate("20240001", "password"))
+                .willReturn(Optional.of(new LocalAuthLoginDto("20240001", "ROLE_USER")));
         given(memberRepository.findByStudentNumber("20240001")).willReturn(Optional.of(member));
         given(jwtTokenProvider.createAccessToken(member)).willReturn("access-token");
         given(jwtTokenProvider.createRefreshToken(member)).willReturn("refresh-token");
@@ -60,9 +62,10 @@ class LoginTest {
     @Test
     void login_creates_member_when_school_auth_succeeds_and_member_does_not_exist() {
         LoginRequestDto request = new LoginRequestDto("20240002", "password");
-        Member savedMember = Member.create("20240002", null, null, null);
+        Member savedMember = Member.createWithRole("20240002", null, null, null, "ROLE_ADMIN");
 
-        given(schoolAuthRepository.verify("20240002", "password")).willReturn(true);
+        given(schoolAuthRepository.authenticate("20240002", "password"))
+                .willReturn(Optional.of(new LocalAuthLoginDto("20240002", "ROLE_ADMIN")));
         given(memberRepository.findByStudentNumber("20240002")).willReturn(Optional.empty());
         given(memberRepository.save(any(Member.class))).willReturn(savedMember);
         given(jwtTokenProvider.createAccessToken(savedMember)).willReturn("new-access-token");
@@ -74,14 +77,14 @@ class LoginTest {
 
         assertThat(response.accessToken()).isEqualTo("new-access-token");
         assertThat(response.refreshToken()).isEqualTo("new-refresh-token");
-        verify(memberRepository).save(any(Member.class));
+        verify(memberRepository).save(argThat(member -> "ROLE_ADMIN".equals(member.getRole())));
     }
 
     @Test
     void login_fails_when_school_auth_fails() {
         LoginRequestDto request = new LoginRequestDto("20240003", "wrong-password");
 
-        given(schoolAuthRepository.verify("20240003", "wrong-password")).willReturn(false);
+        given(schoolAuthRepository.authenticate("20240003", "wrong-password")).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> memberService.login(request))
                 .isInstanceOf(MyException.class)
