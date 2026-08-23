@@ -19,7 +19,8 @@ public enum ErrorCode {
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "TOKEN_EXPIRED", "만료된 토큰입니다."),
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "TOKEN_INVALID", "유효하지 않은 토큰입니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "접근 권한이 없습니다."),
-    ;
+
+    RESEARCH_KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "RESEARCH_KEYWORD_NOT_FOUND", "검색 키워드가 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String code;
