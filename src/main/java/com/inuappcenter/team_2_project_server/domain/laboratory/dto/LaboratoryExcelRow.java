@@ -8,6 +8,7 @@ public record LaboratoryExcelRow(
         Department department,
         String labName,
         String professorName,
+        String professorEmail,
         String labUrl
 ) {
 }
