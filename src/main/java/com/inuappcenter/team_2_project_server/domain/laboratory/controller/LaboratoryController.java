@@ -14,9 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/laboratory")
-public class LaboratoryController {
+public class LaboratoryController implements LaboratoryApiSpecification {
     private final LaboratoryExcelImportService laboratoryExcelImportService;
 
+    @Override
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDto<Void>> importLaboratory(@RequestPart MultipartFile file) {
         laboratoryExcelImportService.importExcel(file);
