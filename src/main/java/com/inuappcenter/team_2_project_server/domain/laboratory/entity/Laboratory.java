@@ -3,6 +3,7 @@ package com.inuappcenter.team_2_project_server.domain.laboratory.entity;
 import com.inuappcenter.team_2_project_server.domain.department.College;
 import com.inuappcenter.team_2_project_server.domain.department.Department;
 import com.inuappcenter.team_2_project_server.domain.member.entity.Professor;
+import com.inuappcenter.team_2_project_server.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
                 )
         }
 )
-public class Laboratory {
+public class Laboratory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
