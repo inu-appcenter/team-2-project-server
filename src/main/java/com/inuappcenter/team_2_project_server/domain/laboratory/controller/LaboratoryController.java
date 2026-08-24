@@ -1,6 +1,7 @@
 package com.inuappcenter.team_2_project_server.domain.laboratory.controller;
 
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryCreateRequestDto;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryUpdateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.response.LaboratoryResponseDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.service.LaboratoryExcelImportService;
 import com.inuappcenter.team_2_project_server.domain.laboratory.service.LaboratoryService;
@@ -58,6 +59,18 @@ public class LaboratoryController implements LaboratoryApiSpecification {
 
         return ResponseEntity.ok(
                 ResponseDto.of(responses, "전체 연구실 조회 성공")
+        );
+    }
+
+    @PatchMapping
+    public ResponseEntity<ResponseDto<LaboratoryResponseDto>> updateLaboratory(
+            @PathVariable Long laboratoryId,
+            @RequestBody LaboratoryUpdateRequestDto request
+    ) {
+        LaboratoryResponseDto response = laboratoryService.updateLab(laboratoryId, request);
+
+        return ResponseEntity.ok(
+                ResponseDto.of(response, "연구실 수정 성공")
         );
     }
 }
