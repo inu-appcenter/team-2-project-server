@@ -1,5 +1,8 @@
 package com.inuappcenter.team_2_project_server.domain.laboratory.controller;
 
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryCreateRequestDto;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryUpdateRequestDto;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.response.LaboratoryResponseDto;
 import com.inuappcenter.team_2_project_server.global.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,10 +14,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "연구실", description = "연구실 편람 엑셀 동기화 API")
+import java.util.List;
+
+@Tag(name = "연구실", description = "연구실 관리 및 편람 엑셀 동기화 API")
 public interface LaboratoryApiSpecification {
 
     @Operation(
@@ -112,5 +119,325 @@ public interface LaboratoryApiSpecification {
                     )
             )
             @RequestPart MultipartFile file
+    );
+
+    @Operation(summary = "연구실 생성", description = "교수 ID를 기준으로 연구실을 수동 생성합니다.")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "생성할 연구실 정보. 연구분야는 쉼표 문자열이 아니라 배열로 전달합니다.",
+            required = true,
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = LaboratoryCreateRequestDto.class),
+                    examples = @ExampleObject(value = """
+                            {
+                              "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                              "department": "COMPUTER_ENGINEERING",
+                              "labName": "소프트웨어공학 연구실",
+                              "location": "7호관 401호",
+                              "capacity": 10,
+                              "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
+                              "professorId": 1,
+                              "labUrl": "https://example.com/lab",
+                              "researchAreas": [
+                                "소프트웨어공학",
+                                "인공지능"
+                              ]
+                            }
+                            """)
+            )
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "연구실 생성 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": {
+                                        "id": 1,
+                                        "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                        "department": "COMPUTER_ENGINEERING",
+                                        "labName": "소프트웨어공학 연구실",
+                                        "location": "7호관 401호",
+                                        "capacity": 10,
+                                        "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
+                                        "professor": {
+                                          "id": 1,
+                                          "positionRaw": "교수",
+                                          "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                          "department": "COMPUTER_ENGINEERING",
+                                          "name": "홍길동",
+                                          "phoneNumber": "032-835-0000",
+                                          "email": "professor@example.com"
+                                        },
+                                        "labUrl": "https://example.com/lab",
+                                        "researchAreas": [
+                                          "소프트웨어공학",
+                                          "인공지능"
+                                        ]
+                                      },
+                                      "code": null,
+                                      "message": "연구실 생성 성공"
+                                    }
+                                    """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "존재하지 않는 교수 또는 중복 연구실",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "존재하지 않는 교수",
+                                            value = """
+                                                    {
+                                                      "data": null,
+                                                      "code": "PROFESSOR_NOT_FOUND",
+                                                      "message": "존재하지 않는 교수입니다."
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "중복 연구실",
+                                            value = """
+                                                    {
+                                                      "data": null,
+                                                      "code": "DUPLICATED_LAB",
+                                                      "message": "중복된 연구실입니다."
+                                                    }
+                                                    """
+                                    )
+                            }
+                    )
+            )
+    })
+    ResponseEntity<ResponseDto<LaboratoryResponseDto>> createLaboratory(
+            @RequestBody LaboratoryCreateRequestDto request
+    );
+
+    @Operation(summary = "연구실 단건 조회", description = "연구실 ID로 단일 연구실 정보를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "연구실 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": {
+                                        "id": 1,
+                                        "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                        "department": "COMPUTER_ENGINEERING",
+                                        "labName": "소프트웨어공학 연구실",
+                                        "location": "7호관 401호",
+                                        "capacity": 10,
+                                        "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
+                                        "professor": {
+                                          "id": 1,
+                                          "positionRaw": "교수",
+                                          "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                          "department": "COMPUTER_ENGINEERING",
+                                          "name": "홍길동",
+                                          "phoneNumber": "032-835-0000",
+                                          "email": "professor@example.com"
+                                        },
+                                        "labUrl": "https://example.com/lab",
+                                        "researchAreas": [
+                                          "소프트웨어공학",
+                                          "인공지능"
+                                        ]
+                                      },
+                                      "code": null,
+                                      "message": "연구실 조회 성공"
+                                    }
+                                    """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 연구실",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": null,
+                                      "code": "LABORATORY_NOT_FOUND",
+                                      "message": "존재하지 않는 연구실입니다."
+                                    }
+                                    """)
+                    )
+            )
+    })
+    ResponseEntity<ResponseDto<LaboratoryResponseDto>> getLaboratory(
+            @PathVariable Long laboratoryId
+    );
+
+    @Operation(summary = "연구실 전체 조회", description = "등록된 전체 연구실 목록을 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "전체 연구실 조회 성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseDto.class),
+                    examples = @ExampleObject(value = """
+                            {
+                              "data": [
+                                {
+                                  "id": 1,
+                                  "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                  "department": "COMPUTER_ENGINEERING",
+                                  "labName": "소프트웨어공학 연구실",
+                                  "location": "7호관 401호",
+                                  "capacity": 10,
+                                  "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
+                                  "professor": {
+                                    "id": 1,
+                                    "positionRaw": "교수",
+                                    "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                    "department": "COMPUTER_ENGINEERING",
+                                    "name": "홍길동",
+                                    "phoneNumber": "032-835-0000",
+                                    "email": "professor@example.com"
+                                  },
+                                  "labUrl": "https://example.com/lab",
+                                  "researchAreas": [
+                                    "소프트웨어공학",
+                                    "인공지능"
+                                  ]
+                                }
+                              ],
+                              "code": null,
+                              "message": "전체 연구실 조회 성공"
+                            }
+                            """)
+            )
+    )
+    ResponseEntity<ResponseDto<List<LaboratoryResponseDto>>> getAllLaboratory();
+
+    @Operation(
+            summary = "연구실 수정",
+            description = """
+                    연구실 ID로 연구실 정보를 수정합니다.
+                    요청에 포함된 값만 수정하며, 연구분야는 쉼표 문자열이 아니라 배열로 전달합니다.
+                    """
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "수정할 연구실 정보. 변경하지 않을 필드는 요청에서 제외합니다.",
+            required = true,
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = LaboratoryUpdateRequestDto.class),
+                    examples = @ExampleObject(value = """
+                            {
+                              "location": "7호관 402호",
+                              "capacity": 12,
+                              "researchAreas": [
+                                "소프트웨어공학",
+                                "데이터마이닝"
+                              ]
+                            }
+                            """)
+            )
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "연구실 수정 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": {
+                                        "id": 1,
+                                        "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                        "department": "COMPUTER_ENGINEERING",
+                                        "labName": "소프트웨어공학 연구실",
+                                        "location": "7호관 402호",
+                                        "capacity": 12,
+                                        "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
+                                        "professor": {
+                                          "id": 1,
+                                          "positionRaw": "교수",
+                                          "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                          "department": "COMPUTER_ENGINEERING",
+                                          "name": "홍길동",
+                                          "phoneNumber": "032-835-0000",
+                                          "email": "professor@example.com"
+                                        },
+                                        "labUrl": "https://example.com/lab",
+                                        "researchAreas": [
+                                          "소프트웨어공학",
+                                          "데이터마이닝"
+                                        ]
+                                      },
+                                      "code": null,
+                                      "message": "연구실 수정 성공"
+                                    }
+                                    """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 연구실",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": null,
+                                      "code": "LABORATORY_NOT_FOUND",
+                                      "message": "존재하지 않는 연구실입니다."
+                                    }
+                                    """)
+                    )
+            )
+    })
+    ResponseEntity<ResponseDto<LaboratoryResponseDto>> updateLaboratory(
+            @PathVariable Long laboratoryId,
+            @RequestBody LaboratoryUpdateRequestDto request
+    );
+
+    @Operation(summary = "연구실 삭제", description = "연구실 ID로 연구실을 삭제합니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "연구실 삭제 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": 1,
+                                      "code": null,
+                                      "message": "연구실 삭제 완료"
+                                    }
+                                    """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 연구실",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": null,
+                                      "code": "LABORATORY_NOT_FOUND",
+                                      "message": "존재하지 않는 연구실입니다."
+                                    }
+                                    """)
+                    )
+            )
+    })
+    ResponseEntity<ResponseDto<Long>> deleteLaboratory(
+            @PathVariable Long laboratoryId
     );
 }
