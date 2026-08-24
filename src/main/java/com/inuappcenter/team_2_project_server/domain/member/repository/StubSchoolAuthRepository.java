@@ -1,9 +1,15 @@
 package com.inuappcenter.team_2_project_server.domain.member.repository;
 
+import com.inuappcenter.team_2_project_server.domain.member.dto.LocalAuthLoginDto;
+import com.inuappcenter.team_2_project_server.global.config.LocalAuthConfig;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
+@RequiredArgsConstructor
 @ConditionalOnProperty(
         name = "oracle.enabled",
         havingValue = "false",
@@ -11,9 +17,16 @@ import org.springframework.stereotype.Repository;
 )
 public class StubSchoolAuthRepository implements SchoolAuthRepository {
 
+    private final LocalAuthConfig localAuthConfig;
+
     @Override
-    public boolean verify(String studentId, String password) {
-        return "local_user".equals(studentId) && "local_user".equals(password)
-                || ("local_admin".equals(studentId) && "local_admin".equals(password));
+    public Optional<LocalAuthLoginDto> authenticate(String studentId, String password) {
+        return localAuthConfig.findByStudentId(studentId)
+                .filter(user -> user.getPassword().equals(password))
+                .map(user -> new LocalAuthLoginDto(
+                        user.getStudentId(),
+                        user.primaryRole()
+                ));
     }
+
 }

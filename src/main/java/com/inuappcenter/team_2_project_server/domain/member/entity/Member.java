@@ -69,13 +69,15 @@ public class Member extends BaseEntity implements UserDetails {
         return new Member(studentNumber, nickName, department, email, LocalDateTime.now(), "ROLE_USER");
     }
 
-    public static Member createAdmin(
+    // 외부에서 role을 받아서 member를 만드는 정적 팩토리 메서드
+    public static Member createWithRole(
             String studentNumber,
             String nickName,
             Department department,
-            String email
+            String email,
+            String role
     ) {
-        return new Member(studentNumber, nickName, department, email, LocalDateTime.now(), "ROLE_ADMIN");
+        return new Member(studentNumber, nickName, department, email, LocalDateTime.now(), role);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.inuappcenter.team_2_project_server.domain.member.service;
 
+import com.inuappcenter.team_2_project_server.domain.member.dto.LocalAuthLoginDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.LoginRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.MemberCreateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.MemberUpdateRequestDto;
@@ -35,22 +36,20 @@ public class MemberService {
         String studentNumber = request.studentNumber();
         String password = request.password();
 
-        if (!schoolAuthRepository.verify(studentNumber, password)) {
-            throw new MyException(ErrorCode.INVALID_CREDENTIALS);
-        }
+        LocalAuthLoginDto authResult = schoolAuthRepository.authenticate(studentNumber, password)
+                .orElseThrow(() -> new MyException(ErrorCode.INVALID_CREDENTIALS));
 
         Member member = memberRepository.findByStudentNumber(studentNumber)
-                .orElseGet(() -> {
-                    if ("local_admin".equals(studentNumber)) {
-                        return memberRepository.save(
-                                Member.createAdmin(studentNumber, studentNumber, null, null)
-                        );
-                    }
+                .orElseGet(() -> memberRepository.save(
+                        Member.createWithRole(
+                                authResult.studentNumber(),
+                                authResult.studentNumber(),
+                                null,
+                                null,
+                                authResult.role()
+                        )
+                ));
 
-                    return memberRepository.save(
-                            Member.create(studentNumber, studentNumber, null, null)
-                    );
-                });
         String accessToken = jwtTokenProvider.createAccessToken(member);
         String refreshToken = jwtTokenProvider.createRefreshToken(member);
 

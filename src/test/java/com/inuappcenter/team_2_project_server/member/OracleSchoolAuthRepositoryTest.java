@@ -37,9 +37,11 @@ OracleSchoolAuthRepositoryTest {
                 eq("password")
         )).willReturn("Y");
 
-        boolean result = oracleSchoolAuthRepository.verify("20240001", "password");
+        var result = oracleSchoolAuthRepository.authenticate("20240001", "password");
 
-        assertThat(result).isTrue();
+        assertThat(result).isPresent();
+        assertThat(result.get().studentNumber()).isEqualTo("20240001");
+        assertThat(result.get().role()).isEqualTo("ROLE_USER");
     }
 
     @Test
@@ -51,9 +53,9 @@ OracleSchoolAuthRepositoryTest {
                 eq("wrong-password")
         )).willReturn("N");
 
-        boolean result = oracleSchoolAuthRepository.verify("20240001", "wrong-password");
+        var result = oracleSchoolAuthRepository.authenticate("20240001", "wrong-password");
 
-        assertThat(result).isFalse();
+        assertThat(result).isEmpty();
     }
 
     @Test
@@ -65,7 +67,7 @@ OracleSchoolAuthRepositoryTest {
                 eq("password")
         )).willThrow(new DataAccessResourceFailureException("oracle connection failed"));
 
-        assertThatThrownBy(() -> oracleSchoolAuthRepository.verify("20240001", "password"))
+        assertThatThrownBy(() -> oracleSchoolAuthRepository.authenticate("20240001", "password"))
                 .isInstanceOf(MyException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.ORACLE_AUTH_UNAVAILABLE);

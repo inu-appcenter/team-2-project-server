@@ -1,5 +1,6 @@
 package com.inuappcenter.team_2_project_server.domain.member.repository;
 
+import com.inuappcenter.team_2_project_server.domain.member.dto.LocalAuthLoginDto;
 import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
 import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,8 +8,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-@ConditionalOnProperty(name = "oracle.enabled", havingValue = "true")
+@ConditionalOnProperty(
+        name = "oracle.enabled",
+        havingValue = "true"
+)
 public class OracleSchoolAuthRepository implements SchoolAuthRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -18,11 +24,15 @@ public class OracleSchoolAuthRepository implements SchoolAuthRepository {
     }
 
     @Override
-    public boolean verify(String studentId, String password) {
+    public Optional<LocalAuthLoginDto> authenticate(String studentId, String password) {
         try {
             String result = jdbcTemplate.queryForObject(
                     "SELECT F_LOGIN_CHECK(?, ?) FROM DUAL", String.class, studentId, password);
-            return "Y".equals(result);
+            if (!"Y".equals(result)) {
+                return Optional.empty();
+            }
+            return Optional.of(new LocalAuthLoginDto(studentId, "ROLE_USER"));
+
         } catch (Exception e) {
             throw new MyException(ErrorCode.ORACLE_AUTH_UNAVAILABLE);
         }
