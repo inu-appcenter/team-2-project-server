@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -27,13 +29,12 @@ public class LaboratoryService {
     public LaboratoryResponseDto createLab(
             LaboratoryCreateRequestDto request
     ) {
-        if (laboratoryRepository.existsByLabNameAndProfessorId(request.labName(), request.professorId())) {
-            throw new MyException(ErrorCode.DUPLICATED_LABORATORY);
-        }
-
         Professor professor = professorRepository.findById(request.professorId())
                 .orElseThrow(() -> new MyException(ErrorCode.PROFESSOR_NOT_FOUND));
 
+        if (laboratoryRepository.existsByLabNameAndProfessorId(request.labName(), request.professorId())) {
+            throw new MyException(ErrorCode.DUPLICATED_LABORATORY);
+        }
 
         Laboratory laboratory = Laboratory.create(
                 request.college(),
@@ -47,6 +48,31 @@ public class LaboratoryService {
                 request.researchFieldRaw()
         );
 
+        Laboratory savedLaboratory = laboratoryRepository.save(laboratory);
+
+        return LaboratoryResponseDto.from(savedLaboratory);
+    }
+
+    /**
+     * 연구실 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public LaboratoryResponseDto getLab(
+            Long laboratoryId
+    ) {
+        Laboratory laboratory = laboratoryRepository.findById(laboratoryId)
+                .orElseThrow(() -> new MyException(ErrorCode.LABORATORY_NOT_FOUND));
+
         return LaboratoryResponseDto.from(laboratory);
+    }
+
+    /**
+     * 연구실 전제 조회
+     */
+    @Transactional(readOnly = true)
+    public List<LaboratoryResponseDto> getAllLab() {
+        return laboratoryRepository.findAll().stream()
+                .map(LaboratoryResponseDto::from)
+                .toList();
     }
 }
