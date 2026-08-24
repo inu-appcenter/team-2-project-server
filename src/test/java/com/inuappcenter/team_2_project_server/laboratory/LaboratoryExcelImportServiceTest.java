@@ -2,8 +2,8 @@ package com.inuappcenter.team_2_project_server.laboratory;
 
 import com.inuappcenter.team_2_project_server.domain.department.College;
 import com.inuappcenter.team_2_project_server.domain.department.Department;
-import com.inuappcenter.team_2_project_server.domain.laboratory.dto.LaboratoryExcelRow;
-import com.inuappcenter.team_2_project_server.domain.laboratory.dto.ProfessorExcelRow;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.LaboratoryExcelRow;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.ProfessorExcelRow;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.Laboratory;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.LaboratoryResearchArea;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.ResearchArea;
