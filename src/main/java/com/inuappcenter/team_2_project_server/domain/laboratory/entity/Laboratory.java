@@ -99,11 +99,23 @@ public class Laboratory extends BaseEntity {
             String labUrl,
             String researchFieldRaw
     ) {
-        this.labName = labName;
-        this.location = location;
-        this.capacity = capacity;
-        this.introduction = introduction;
-        this.labUrl = labUrl;
-        this.researchFieldRaw = researchFieldRaw;
+        if (labName != null) {
+            this.labName = labName;
+        }
+        if (location != null) {
+            this.location = location;
+        }
+        if (capacity != null) {
+            this.capacity = capacity;
+        }
+        if (introduction != null) {
+            this.introduction = introduction;
+        }
+        if (labUrl != null) {
+            this.labUrl = labUrl;
+        }
+        if (researchFieldRaw != null) {
+            this.researchFieldRaw = researchFieldRaw;
+        }
     }
 }
