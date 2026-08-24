@@ -1,6 +1,7 @@
 package com.inuappcenter.team_2_project_server.domain.laboratory.service;
 
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryCreateRequestDto;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryUpdateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.response.LaboratoryResponseDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.Laboratory;
 import com.inuappcenter.team_2_project_server.domain.laboratory.repository.LaboratoryRepository;
@@ -19,8 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class LaboratoryService {
-    private LaboratoryRepository laboratoryRepository;
-    private ProfessorRepository professorRepository;
+    private final LaboratoryRepository laboratoryRepository;
+    private final ProfessorRepository professorRepository;
 
     /**
      * 연구실 수동 생성 메서드
@@ -74,5 +75,25 @@ public class LaboratoryService {
         return laboratoryRepository.findAll().stream()
                 .map(LaboratoryResponseDto::from)
                 .toList();
+    }
+
+    @Transactional
+    public LaboratoryResponseDto updateLab(
+            Long laboratoryId,
+            LaboratoryUpdateRequestDto request
+    ) {
+        Laboratory laboratory = laboratoryRepository.findById(laboratoryId)
+                .orElseThrow(() -> new MyException(ErrorCode.LABORATORY_NOT_FOUND));
+
+        laboratory.updateLab(
+                request.labName(),
+                request.location(),
+                request.capacity(),
+                request.introduction(),
+                request.labUrl(),
+                request.researchFieldRaw()
+        );
+
+        return LaboratoryResponseDto.from(laboratory);
     }
 }
