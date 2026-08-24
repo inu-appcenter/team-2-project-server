@@ -62,7 +62,7 @@ public class LaboratoryController implements LaboratoryApiSpecification {
         );
     }
 
-    @PatchMapping
+    @PatchMapping("/{laboratoryId}")
     public ResponseEntity<ResponseDto<LaboratoryResponseDto>> updateLaboratory(
             @PathVariable Long laboratoryId,
             @RequestBody LaboratoryUpdateRequestDto request
@@ -71,6 +71,16 @@ public class LaboratoryController implements LaboratoryApiSpecification {
 
         return ResponseEntity.ok(
                 ResponseDto.of(response, "연구실 수정 성공")
+        );
+    }
+
+    @DeleteMapping("/{laboratoryId}")
+    public ResponseEntity<ResponseDto<Long>> deleteLaboratory(
+            @PathVariable Long laboratoryId
+    ) {
+        laboratoryService.deleteLab(laboratoryId);
+        return ResponseEntity.ok(
+                ResponseDto.of(laboratoryId, "연구실 삭제 완료")
         );
     }
 }
