@@ -15,10 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class LaboratoryService {
     private final LaboratoryRepository laboratoryRepository;
     private final ProfessorRepository professorRepository;
@@ -26,7 +28,6 @@ public class LaboratoryService {
     /**
      * 연구실 수동 생성 메서드
      */
-    @Transactional
     public LaboratoryResponseDto createLab(
             LaboratoryCreateRequestDto request
     ) {
@@ -46,7 +47,7 @@ public class LaboratoryService {
                 request.introduction(),
                 professor,
                 request.labUrl(),
-                request.researchFieldRaw()
+                toResearchFieldRaw(request.researchAreas())
         );
 
         Laboratory savedLaboratory = laboratoryRepository.save(laboratory);
@@ -77,7 +78,6 @@ public class LaboratoryService {
                 .toList();
     }
 
-    @Transactional
     public LaboratoryResponseDto updateLab(
             Long laboratoryId,
             LaboratoryUpdateRequestDto request
@@ -91,9 +91,30 @@ public class LaboratoryService {
                 request.capacity(),
                 request.introduction(),
                 request.labUrl(),
-                request.researchFieldRaw()
+                toResearchFieldRaw(request.researchAreas())
         );
 
         return LaboratoryResponseDto.from(laboratory);
+    }
+
+    public void deleteLab(
+            Long laboratoryId
+    ) {
+        Laboratory laboratory = laboratoryRepository.findById(laboratoryId)
+                .orElseThrow(() -> new MyException(ErrorCode.LABORATORY_NOT_FOUND));
+
+        laboratoryRepository.delete(laboratory);
+    }
+
+    private String toResearchFieldRaw(List<String> researchAreas) {
+        if (researchAreas == null || researchAreas.isEmpty()) {
+            return null;
+        }
+
+        return researchAreas.stream()
+                .map(String::trim)
+                .filter(area -> !area.isBlank())
+                .distinct()
+                .collect(Collectors.joining(", "));
     }
 }
