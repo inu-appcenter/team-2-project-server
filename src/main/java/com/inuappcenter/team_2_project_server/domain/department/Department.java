@@ -97,12 +97,13 @@ public enum Department {
     CONVERGENCE("융합학부", College.COLLEGE_OF_INTERDISCIPLINARY_STUDIES),
 
     // 동북아국제통상물류학부
-    NORTHEAST_ASIAN_TRADE("동북아국제통상전공", College.COLLEGE_OF_GLOBAL_ECONOMICS_AND_TRADE),
-    SMART_LOGISTICS_ENGINEERING("스마트물류공학전공", College.COLLEGE_OF_GLOBAL_ECONOMICS_AND_TRADE),
-    IBE("IBE전공", College.COLLEGE_OF_GLOBAL_ECONOMICS_AND_TRADE),
+    NORTHEAST_ASIAN_TRADE("동북아국제통상전공", College.COLLEGE_OF_NULL),
+    SMART_LOGISTICS_ENGINEERING("스마트물류공학전공", College.COLLEGE_OF_NULL),
+    IBE("IBE전공", College.COLLEGE_OF_NULL),
 
     // 법학부
     LAW("법학부", College.COLLEGE_OF_NULL),
+
     ;
 
     private final String departmentName;    // 학과명
