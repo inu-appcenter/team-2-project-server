@@ -90,4 +90,20 @@ public class Laboratory extends BaseEntity {
     ) {
         return new Laboratory(college, department, labName, location, capacity, introduction, professor, labUrl, researchFieldRaw);
     }
+
+    public void updateLab(
+            String labName,
+            String location,
+            Long capacity,
+            String introduction,
+            String labUrl,
+            String researchFieldRaw
+    ) {
+        this.labName = labName;
+        this.location = location;
+        this.capacity = capacity;
+        this.introduction = introduction;
+        this.labUrl = labUrl;
+        this.researchFieldRaw = researchFieldRaw;
+    }
 }
