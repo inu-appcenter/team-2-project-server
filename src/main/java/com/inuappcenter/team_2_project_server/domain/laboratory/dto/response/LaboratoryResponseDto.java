@@ -5,6 +5,9 @@ import com.inuappcenter.team_2_project_server.domain.department.Department;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.Laboratory;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.ProfessorResponseDto;
 
+import java.util.Arrays;
+import java.util.List;
+
 public record LaboratoryResponseDto(
         Long id,
         College college,
@@ -15,7 +18,7 @@ public record LaboratoryResponseDto(
         String introduction,
         ProfessorResponseDto professor,
         String labUrl,
-        String researchFieldRaw
+        List<String> researchAreas
 ) {
 
     public static LaboratoryResponseDto from(Laboratory laboratory) {
@@ -29,7 +32,19 @@ public record LaboratoryResponseDto(
                 laboratory.getIntroduction(),
                 ProfessorResponseDto.from(laboratory.getProfessor()),
                 laboratory.getLabUrl(),
-                laboratory.getResearchFieldRaw()
+                parseResearchAreas(laboratory.getResearchFieldRaw())
         );
+    }
+
+    private static List<String> parseResearchAreas(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return List.of();
+        }
+
+        return Arrays.stream(raw.split(","))
+                .map(String::trim)
+                .filter(area -> !area.isBlank())
+                .distinct()
+                .toList();
     }
 }
