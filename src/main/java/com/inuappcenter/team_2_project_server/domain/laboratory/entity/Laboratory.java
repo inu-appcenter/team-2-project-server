@@ -6,8 +6,10 @@ import com.inuappcenter.team_2_project_server.domain.member.entity.Professor;
 import com.inuappcenter.team_2_project_server.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
@@ -87,5 +89,33 @@ public class Laboratory extends BaseEntity {
             String researchFieldRaw
     ) {
         return new Laboratory(college, department, labName, location, capacity, introduction, professor, labUrl, researchFieldRaw);
+    }
+
+    public void updateLab(
+            String labName,
+            String location,
+            Long capacity,
+            String introduction,
+            String labUrl,
+            String researchFieldRaw
+    ) {
+        if (labName != null) {
+            this.labName = labName;
+        }
+        if (location != null) {
+            this.location = location;
+        }
+        if (capacity != null) {
+            this.capacity = capacity;
+        }
+        if (introduction != null) {
+            this.introduction = introduction;
+        }
+        if (labUrl != null) {
+            this.labUrl = labUrl;
+        }
+        if (researchFieldRaw != null) {
+            this.researchFieldRaw = researchFieldRaw;
+        }
     }
 }

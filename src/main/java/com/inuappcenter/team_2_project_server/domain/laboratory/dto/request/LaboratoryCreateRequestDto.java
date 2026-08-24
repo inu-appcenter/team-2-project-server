@@ -1,19 +1,19 @@
-package com.inuappcenter.team_2_project_server.domain.laboratory.dto;
+package com.inuappcenter.team_2_project_server.domain.laboratory.dto.request;
 
 import com.inuappcenter.team_2_project_server.domain.department.College;
 import com.inuappcenter.team_2_project_server.domain.department.Department;
-import com.inuappcenter.team_2_project_server.domain.member.dto.response.ProfessorResponseDto;
 
-public record LaboratoryResponseDto(
-        Long id,
+import java.util.List;
+
+public record LaboratoryCreateRequestDto(
         College college,
         Department department,
         String labName,
         String location,
         Long capacity,
         String introduction,
-        ProfessorResponseDto professor,
+        Long professorId,
         String labUrl,
-        String researchFieldRaw
+        List<String> researchAreas
 ) {
 }
