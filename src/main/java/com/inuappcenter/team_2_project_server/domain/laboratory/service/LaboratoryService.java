@@ -1,5 +1,6 @@
 package com.inuappcenter.team_2_project_server.domain.laboratory.service;
 
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryCapacityUpdateDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryCreateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryUpdateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.response.LaboratoryResponseDto;
@@ -43,7 +44,8 @@ public class LaboratoryService {
                 request.department(),
                 request.labName(),
                 request.location(),
-                request.capacity(),
+                request.capacity().graduateStudentCount(),
+                request.capacity().undergraduateStudentCount(),
                 request.introduction(),
                 professor,
                 request.labUrl(),
@@ -56,7 +58,7 @@ public class LaboratoryService {
     }
 
     /**
-     * 연구실 단건 조회
+     * 연구실 단건 조회 메서드
      */
     @Transactional(readOnly = true)
     public LaboratoryResponseDto getLab(
@@ -69,7 +71,7 @@ public class LaboratoryService {
     }
 
     /**
-     * 연구실 전제 조회
+     * 연구실 전제 조회 메서드
      */
     @Transactional(readOnly = true)
     public List<LaboratoryResponseDto> getAllLab() {
@@ -78,6 +80,9 @@ public class LaboratoryService {
                 .toList();
     }
 
+    /**
+     * 연구실 수정 메서드
+     */
     public LaboratoryResponseDto updateLab(
             Long laboratoryId,
             LaboratoryUpdateRequestDto request
@@ -85,10 +90,14 @@ public class LaboratoryService {
         Laboratory laboratory = laboratoryRepository.findById(laboratoryId)
                 .orElseThrow(() -> new MyException(ErrorCode.LABORATORY_NOT_FOUND));
 
+        LaboratoryCapacityUpdateDto capacity = request.capacity();
+
+
         laboratory.updateLab(
                 request.labName(),
                 request.location(),
-                request.capacity(),
+                capacity == null ? null : capacity.graduateStudentCount(),
+                capacity == null ? null : capacity.undergraduateStudentCount(),
                 request.introduction(),
                 request.labUrl(),
                 toResearchFieldRaw(request.researchAreas())
@@ -97,6 +106,9 @@ public class LaboratoryService {
         return LaboratoryResponseDto.from(laboratory);
     }
 
+    /**
+     * 연구실 삭제 메서드
+     */
     public void deleteLab(
             Long laboratoryId
     ) {
@@ -106,6 +118,7 @@ public class LaboratoryService {
         laboratoryRepository.delete(laboratory);
     }
 
+    // 요청으로 들어온 String값을 내부 ResearchFieldRaw에 저장하는 메서드
     private String toResearchFieldRaw(List<String> researchAreas) {
         if (researchAreas == null || researchAreas.isEmpty()) {
             return null;
@@ -116,5 +129,19 @@ public class LaboratoryService {
                 .filter(area -> !area.isBlank())
                 .distinct()
                 .collect(Collectors.joining(", "));
+    }
+
+    @Transactional(readOnly = true)
+    public List<LaboratoryResponseDto> searchLabs(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            throw new MyException(ErrorCode.INVALID_SEARCH_KEYWORD);
+        }
+
+        String trimmedKeyword = keyword.trim();
+
+        return laboratoryRepository.findByLabNameContainingIgnoreCaseOrProfessor_NameContainingIgnoreCase(trimmedKeyword, trimmedKeyword)
+                .stream()
+                .map(LaboratoryResponseDto::from)
+                .toList();
     }
 }

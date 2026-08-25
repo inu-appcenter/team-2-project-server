@@ -2,6 +2,7 @@ package com.inuappcenter.team_2_project_server.laboratory;
 
 import com.inuappcenter.team_2_project_server.domain.department.College;
 import com.inuappcenter.team_2_project_server.domain.department.Department;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.LaboratoryCapacityDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.LaboratoryExcelRow;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.ProfessorExcelRow;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.Laboratory;
@@ -136,7 +137,9 @@ class LaboratoryExcelImportServiceTest {
                 "AI연구실",
                 "홍길동",
                 "hong@inu.ac.kr",
-                "https://lab.example.com"
+                "7호관 401호",
+                "https://lab.example.com",
+                new LaboratoryCapacityDto(6, 7)
         );
     }
 

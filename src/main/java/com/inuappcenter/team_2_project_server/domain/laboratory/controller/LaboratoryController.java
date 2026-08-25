@@ -6,6 +6,7 @@ import com.inuappcenter.team_2_project_server.domain.laboratory.dto.response.Lab
 import com.inuappcenter.team_2_project_server.domain.laboratory.service.LaboratoryExcelImportService;
 import com.inuappcenter.team_2_project_server.domain.laboratory.service.LaboratoryService;
 import com.inuappcenter.team_2_project_server.global.dto.ResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class LaboratoryController implements LaboratoryApiSpecification {
 
     @PostMapping
     public ResponseEntity<ResponseDto<LaboratoryResponseDto>> createLaboratory(
-            @RequestBody LaboratoryCreateRequestDto request
+            @Valid @RequestBody LaboratoryCreateRequestDto request
     ) {
         LaboratoryResponseDto response = laboratoryService.createLab(request);
 
@@ -65,7 +66,7 @@ public class LaboratoryController implements LaboratoryApiSpecification {
     @PatchMapping("/{laboratoryId}")
     public ResponseEntity<ResponseDto<LaboratoryResponseDto>> updateLaboratory(
             @PathVariable Long laboratoryId,
-            @RequestBody LaboratoryUpdateRequestDto request
+            @Valid @RequestBody LaboratoryUpdateRequestDto request
     ) {
         LaboratoryResponseDto response = laboratoryService.updateLab(laboratoryId, request);
 
@@ -81,6 +82,16 @@ public class LaboratoryController implements LaboratoryApiSpecification {
         laboratoryService.deleteLab(laboratoryId);
         return ResponseEntity.ok(
                 ResponseDto.of(laboratoryId, "연구실 삭제 완료")
+        );
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ResponseDto<List<LaboratoryResponseDto>>> searchLaboratory(
+            @RequestParam String keyword
+    ) {
+        List<LaboratoryResponseDto> responses = laboratoryService.searchLabs(keyword);
+        return ResponseEntity.ok(
+                ResponseDto.of(responses, "연구실 검색 성공")
         );
     }
 }

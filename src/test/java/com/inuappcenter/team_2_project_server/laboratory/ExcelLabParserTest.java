@@ -38,7 +38,10 @@ class ExcelLabParserTest {
         assertThat(row.labName()).isEqualTo("AI연구실");
         assertThat(row.professorName()).isEqualTo("홍길동");
         assertThat(row.professorEmail()).isEqualTo("hong@inu.ac.kr");
+        assertThat(row.location()).isEqualTo("7호관 401호");
         assertThat(row.labUrl()).isEqualTo("https://lab.example.com");
+        assertThat(row.capacity().graduateStudentCount()).isEqualTo(6);
+        assertThat(row.capacity().undergraduateStudentCount()).isEqualTo(7);
     }
 
     @Test
@@ -86,7 +89,9 @@ class ExcelLabParserTest {
         header.createCell(3).setCellValue("연구실명");
         header.createCell(4).setCellValue("지도교수");
         header.createCell(5).setCellValue("교수 이메일");
-        header.createCell(6).setCellValue("개별 연구실 URL");
+        header.createCell(6).setCellValue("연구실 위치");
+        header.createCell(7).setCellValue("개별 연구실 URL");
+        header.createCell(8).setCellValue("인원수");
 
         Row row = sheet.createRow(1);
         row.createCell(0).setCellValue("1");
@@ -95,7 +100,9 @@ class ExcelLabParserTest {
         row.createCell(3).setCellValue("AI연구실");
         row.createCell(4).setCellValue("홍길동");
         row.createCell(5).setCellValue("hong@inu.ac.kr");
-        row.createCell(6).setCellValue("https://lab.example.com");
+        row.createCell(6).setCellValue("7호관 401호");
+        row.createCell(7).setCellValue("https://lab.example.com");
+        row.createCell(8).setCellValue("석박사: 6명, 학부: 7명");
     }
 
     private void createProfessorSheet(Workbook workbook) {

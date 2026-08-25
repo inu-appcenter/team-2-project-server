@@ -40,7 +40,8 @@ public class Laboratory extends BaseEntity {
 
     String location;
 
-    Long capacity;
+    Integer graduateStudentCount;
+    Integer undergraduateStudentCount;
 
     String introduction;
 
@@ -60,7 +61,8 @@ public class Laboratory extends BaseEntity {
             Department department,
             String labName,
             String location,
-            Long capacity,
+            Integer graduateStudentCount,
+            Integer undergraduateStudentCount,
             String introduction,
             Professor professor,
             String labUrl,
@@ -70,7 +72,8 @@ public class Laboratory extends BaseEntity {
         this.department = department;
         this.labName = labName;
         this.location = location;
-        this.capacity = capacity;
+        this.graduateStudentCount = graduateStudentCount;
+        this.undergraduateStudentCount = undergraduateStudentCount;
         this.introduction = introduction;
         this.professor = professor;
         this.labUrl = labUrl;
@@ -82,19 +85,21 @@ public class Laboratory extends BaseEntity {
             Department department,
             String labName,
             String location,
-            Long capacity,
+            Integer graduateStudentCount,
+            Integer undergraduateStudentCount,
             String introduction,
             Professor professor,
             String labUrl,
             String researchFieldRaw
     ) {
-        return new Laboratory(college, department, labName, location, capacity, introduction, professor, labUrl, researchFieldRaw);
+        return new Laboratory(college, department, labName, location, graduateStudentCount, undergraduateStudentCount, introduction, professor, labUrl, researchFieldRaw);
     }
 
     public void updateLab(
             String labName,
             String location,
-            Long capacity,
+            Integer graduateStudentCount,
+            Integer undergraduateStudentCount,
             String introduction,
             String labUrl,
             String researchFieldRaw
@@ -105,8 +110,11 @@ public class Laboratory extends BaseEntity {
         if (location != null) {
             this.location = location;
         }
-        if (capacity != null) {
-            this.capacity = capacity;
+        if (graduateStudentCount != null) {
+            this.graduateStudentCount = graduateStudentCount;
+        }
+        if (undergraduateStudentCount != null) {
+            this.undergraduateStudentCount = undergraduateStudentCount;
         }
         if (introduction != null) {
             this.introduction = introduction;

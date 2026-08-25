@@ -2,6 +2,7 @@ package com.inuappcenter.team_2_project_server.domain.laboratory.service;
 
 import com.inuappcenter.team_2_project_server.domain.department.College;
 import com.inuappcenter.team_2_project_server.domain.department.Department;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.LaboratoryCapacityDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.LaboratoryExcelRow;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.ProfessorExcelRow;
 import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 파싱만 담담하는 클래스
@@ -41,7 +44,7 @@ public class ExcelLabParser {
             for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
                 Row row = sheet.getRow(rowIndex);
 
-                if (row == null || isBlankRow(row, formatter, 7)) {
+                if (row == null || isBlankRow(row, formatter, 9)) {
                     continue;
                 }
 
@@ -59,6 +62,7 @@ public class ExcelLabParser {
     private LaboratoryExcelRow toLaboratoryExcelRow(Row row, DataFormatter formatter) {
         College college = College.fromCollegeName(getString(row, 1, formatter));
         Department department = Department.fromDepartmentName(getString(row, 2, formatter));
+        String capacityRaw = getString(row, 8, formatter);
 
         validateCollegeAndDepartment(college, department);
 
@@ -68,7 +72,9 @@ public class ExcelLabParser {
                 getString(row, 3, formatter), // 연구실명
                 getString(row, 4, formatter), // 지도교수
                 getString(row, 5, formatter), // 교수 이메일
-                getString(row, 6, formatter)  // 개별 연구실 URL
+                getString(row, 6, formatter), // 연구실 위치
+                getString(row, 7, formatter), // 개별 연구실 URL
+                parseCapacity(capacityRaw)  // 인원수
         );
     }
 
@@ -171,7 +177,7 @@ public class ExcelLabParser {
         validateHeader(
                 workbook.getSheetAt(0),
                 formatter,
-                List.of("번호", "단과대", "학과/전공", "연구실명", "지도교수", "교수 이메일", "개별 연구실 URL")
+                List.of("번호", "단과대", "학과/전공", "연구실명", "지도교수", "교수 이메일", "연구실 위치", "개별 연구실 URL", "인원수")
         );
 
         validateHeader(
@@ -206,5 +212,30 @@ public class ExcelLabParser {
         }
     }
 
+    // 인원수 문자열 파싱 로직
+    private LaboratoryCapacityDto parseCapacity(String capacityRaw) {
+        if (capacityRaw == null || capacityRaw.isBlank()) {
+            return new LaboratoryCapacityDto(null, null);
+        }
 
+        Integer graduateStudentCount = extractCount(capacityRaw, "석박사");
+        Integer undergraduateStudentCount = extractCount(capacityRaw, "학부");
+
+        return new LaboratoryCapacityDto(
+                graduateStudentCount,
+                undergraduateStudentCount
+        );
+    }
+
+    // 인원수 문자열에서 숫자 뽑아내는 메서드
+    private Integer extractCount(String raw, String label) {
+        Pattern pattern = Pattern.compile(label + "\\s*:\\s*(\\d+)\\s*명 ?");
+        Matcher matcher = pattern.matcher(raw);
+
+        if (!matcher.find()) {
+            return null;
+        }
+
+        return Integer.parseInt(matcher.group(1));
+    }
 }
