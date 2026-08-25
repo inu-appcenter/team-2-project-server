@@ -12,7 +12,9 @@ import java.util.List;
 public record LaboratoryResponseDto(
         Long id,
         College college,
+        String collegeName,
         Department department,
+        String departmentName,
         String labName,
         String location,
         LaboratoryCapacityDto capacity,
@@ -26,7 +28,9 @@ public record LaboratoryResponseDto(
         return new LaboratoryResponseDto(
                 laboratory.getId(),
                 laboratory.getCollege(),
+                laboratory.getCollege().getCollegeName(),
                 laboratory.getDepartment(),
+                laboratory.getDepartment().getDepartmentName(),
                 laboratory.getLabName(),
                 laboratory.getLocation(),
                 new LaboratoryCapacityDto(

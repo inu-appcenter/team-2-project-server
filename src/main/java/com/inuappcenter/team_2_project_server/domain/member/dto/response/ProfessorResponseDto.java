@@ -8,7 +8,9 @@ public record ProfessorResponseDto(
         Long id,
         String positionRaw,
         College college,
+        String collegeName,
         Department department,
+        String departmentName,
         String name,
         String phoneNumber,
         String email
@@ -19,7 +21,9 @@ public record ProfessorResponseDto(
                 professor.getId(),
                 professor.getPositionRaw(),
                 professor.getCollege(),
+                professor.getCollege().getCollegeName(),
                 professor.getDepartment(),
+                professor.getDepartment().getDepartmentName(),
                 professor.getName(),
                 professor.getPhoneNumber(),
                 professor.getEmail()
