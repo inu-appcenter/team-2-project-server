@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -134,7 +135,10 @@ public interface LaboratoryApiSpecification {
                               "department": "COMPUTER_ENGINEERING",
                               "labName": "소프트웨어공학 연구실",
                               "location": "7호관 401호",
-                              "capacity": 10,
+                              "capacity": {
+                                "graduateStudentCount": 6,
+                                "undergraduateStudentCount": 7
+                              },
                               "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
                               "professorId": 1,
                               "labUrl": "https://example.com/lab",
@@ -161,7 +165,10 @@ public interface LaboratoryApiSpecification {
                                         "department": "COMPUTER_ENGINEERING",
                                         "labName": "소프트웨어공학 연구실",
                                         "location": "7호관 401호",
-                                        "capacity": 10,
+                                        "capacity": {
+                                          "graduateStudentCount": 6,
+                                          "undergraduateStudentCount": 7
+                                        },
                                         "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
                                         "professor": {
                                           "id": 1,
@@ -235,7 +242,10 @@ public interface LaboratoryApiSpecification {
                                         "department": "COMPUTER_ENGINEERING",
                                         "labName": "소프트웨어공학 연구실",
                                         "location": "7호관 401호",
-                                        "capacity": 10,
+                                        "capacity": {
+                                          "graduateStudentCount": 6,
+                                          "undergraduateStudentCount": 7
+                                        },
                                         "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
                                         "professor": {
                                           "id": 1,
@@ -294,7 +304,10 @@ public interface LaboratoryApiSpecification {
                                   "department": "COMPUTER_ENGINEERING",
                                   "labName": "소프트웨어공학 연구실",
                                   "location": "7호관 401호",
-                                  "capacity": 10,
+                                  "capacity": {
+                                    "graduateStudentCount": 6,
+                                    "undergraduateStudentCount": 7
+                                  },
                                   "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
                                   "professor": {
                                     "id": 1,
@@ -336,7 +349,9 @@ public interface LaboratoryApiSpecification {
                     examples = @ExampleObject(value = """
                             {
                               "location": "7호관 402호",
-                              "capacity": 12,
+                              "capacity": {
+                                "undergraduateStudentCount": 8
+                              },
                               "researchAreas": [
                                 "소프트웨어공학",
                                 "데이터마이닝"
@@ -360,7 +375,10 @@ public interface LaboratoryApiSpecification {
                                         "department": "COMPUTER_ENGINEERING",
                                         "labName": "소프트웨어공학 연구실",
                                         "location": "7호관 402호",
-                                        "capacity": 12,
+                                        "capacity": {
+                                          "graduateStudentCount": 6,
+                                          "undergraduateStudentCount": 8
+                                        },
                                         "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
                                         "professor": {
                                           "id": 1,
@@ -439,5 +457,70 @@ public interface LaboratoryApiSpecification {
     })
     ResponseEntity<ResponseDto<Long>> deleteLaboratory(
             @PathVariable Long laboratoryId
+    );
+
+    @Operation(summary = "연구실 검색", description = "연구실명 또는 교수명에 검색어가 포함된 연구실 목록을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "연구실 검색 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": [
+                                        {
+                                          "id": 1,
+                                          "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                          "department": "COMPUTER_ENGINEERING",
+                                          "labName": "소프트웨어공학 연구실",
+                                          "location": "7호관 401호",
+                                          "capacity": {
+                                            "graduateStudentCount": 6,
+                                            "undergraduateStudentCount": 7
+                                          },
+                                          "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
+                                          "professor": {
+                                            "id": 1,
+                                            "positionRaw": "교수",
+                                            "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                            "department": "COMPUTER_ENGINEERING",
+                                            "name": "홍길동",
+                                            "phoneNumber": "032-835-0000",
+                                            "email": "professor@example.com"
+                                          },
+                                          "labUrl": "https://example.com/lab",
+                                          "researchAreas": [
+                                            "소프트웨어공학",
+                                            "인공지능"
+                                          ]
+                                        }
+                                      ],
+                                      "code": null,
+                                      "message": "연구실 검색 성공"
+                                    }
+                                    """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "검색어가 비어 있음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": null,
+                                      "code": "NO_SEARCH_KEYWORD",
+                                      "message": "허용하지 않는 검색어입니다."
+                                    }
+                                    """)
+                    )
+            )
+    })
+    ResponseEntity<ResponseDto<List<LaboratoryResponseDto>>> searchLaboratory(
+            @Parameter(description = "연구실명 또는 교수명 검색어", required = true, example = "홍길동")
+            @RequestParam String keyword
     );
 }
