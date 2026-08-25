@@ -2,7 +2,7 @@ package com.inuappcenter.team_2_project_server.domain.laboratory.dto.request;
 
 import com.inuappcenter.team_2_project_server.domain.department.College;
 import com.inuappcenter.team_2_project_server.domain.department.Department;
-import com.inuappcenter.team_2_project_server.domain.laboratory.dto.LaboratoryCapacityDto;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -13,7 +13,7 @@ public record LaboratoryCreateRequestDto(
         @NotNull Department department,
         @NotBlank String labName,
         @NotBlank String location,
-        @NotNull LaboratoryCapacityDto capacity,
+        @Valid @NotNull LaboratoryCapacityCreateDto capacity,
         String introduction,
         @NotNull Long professorId,
         @NotBlank String labUrl,
