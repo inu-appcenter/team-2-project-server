@@ -31,7 +31,9 @@ public enum ErrorCode {
     PROFESSOR_NOT_FOUND_IN_EXCEL(HttpStatus.BAD_REQUEST, "PROFESSOR_NOT_FOUND_IN_EXCEL", "연구실 시트의 교수를 교수정보 시트에서 찾을 수 없습니다."),
     PROFESSOR_NOT_FOUND(HttpStatus.BAD_REQUEST, "PROFESSOR_NOT_FOUND", "존재하지 않는 교수입니다."),
     DUPLICATED_PROFESSOR_IN_EXCEL(HttpStatus.BAD_REQUEST, "DUPLICATED_PROFESSOR_IN_EXCEL", "엑셀 시트에 동일한 교수가 존재합니다."),
-    LABORATORY_NOT_FOUND(HttpStatus.NOT_FOUND, "LABORATORY_NOT_FOUND", "존재하지 않는 연구실입니다.");
+    LABORATORY_NOT_FOUND(HttpStatus.NOT_FOUND, "LABORATORY_NOT_FOUND", "존재하지 않는 연구실입니다."),
+    INVALID_SEARCH_KEYWORD(HttpStatus.BAD_REQUEST, "NO_SEARCH_KEYWORD", "허용하지 않는 검색어입니다."),
+    ;
 
     private final HttpStatus status;
     private final String code;
