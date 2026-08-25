@@ -2,6 +2,7 @@ package com.inuappcenter.team_2_project_server.domain.laboratory.dto.response;
 
 import com.inuappcenter.team_2_project_server.domain.department.College;
 import com.inuappcenter.team_2_project_server.domain.department.Department;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.LaboratoryCapacityDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.Laboratory;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.ProfessorResponseDto;
 
@@ -14,7 +15,7 @@ public record LaboratoryResponseDto(
         Department department,
         String labName,
         String location,
-        Long capacity,
+        LaboratoryCapacityDto capacity,
         String introduction,
         ProfessorResponseDto professor,
         String labUrl,
@@ -28,7 +29,10 @@ public record LaboratoryResponseDto(
                 laboratory.getDepartment(),
                 laboratory.getLabName(),
                 laboratory.getLocation(),
-                laboratory.getCapacity(),
+                new LaboratoryCapacityDto(
+                        laboratory.getGraduateStudentCount(),
+                        laboratory.getUndergraduateStudentCount()
+                ),
                 laboratory.getIntroduction(),
                 ProfessorResponseDto.from(laboratory.getProfessor()),
                 laboratory.getLabUrl(),
