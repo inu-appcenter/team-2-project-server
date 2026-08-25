@@ -51,6 +51,10 @@ public class SecurityConfig {
                         // 최우선 허용
                         .requestMatchers("/api/member/login").permitAll()
 
+                        // 인증이 필요없는 API
+                        .requestMatchers(HttpMethod.GET, "/api/laboratory/**").permitAll()
+
+
                         // 관리자 전용
                         .requestMatchers(HttpMethod.GET, "/api/member", "/api/member/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/laboratory/import").hasRole("ADMIN")
