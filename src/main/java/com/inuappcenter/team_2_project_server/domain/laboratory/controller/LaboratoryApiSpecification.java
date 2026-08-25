@@ -162,7 +162,9 @@ public interface LaboratoryApiSpecification {
                                       "data": {
                                         "id": 1,
                                         "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                        "collegeName": "정보기술대학",
                                         "department": "COMPUTER_ENGINEERING",
+                                        "departmentName": "컴퓨터공학부",
                                         "labName": "소프트웨어공학 연구실",
                                         "location": "7호관 401호",
                                         "capacity": {
@@ -174,7 +176,9 @@ public interface LaboratoryApiSpecification {
                                           "id": 1,
                                           "positionRaw": "교수",
                                           "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                          "collegeName": "정보기술대학",
                                           "department": "COMPUTER_ENGINEERING",
+                                          "departmentName": "컴퓨터공학부",
                                           "name": "홍길동",
                                           "phoneNumber": "032-835-0000",
                                           "email": "professor@example.com"
@@ -239,7 +243,9 @@ public interface LaboratoryApiSpecification {
                                       "data": {
                                         "id": 1,
                                         "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                        "collegeName": "정보기술대학",
                                         "department": "COMPUTER_ENGINEERING",
+                                        "departmentName": "컴퓨터공학부",
                                         "labName": "소프트웨어공학 연구실",
                                         "location": "7호관 401호",
                                         "capacity": {
@@ -251,7 +257,9 @@ public interface LaboratoryApiSpecification {
                                           "id": 1,
                                           "positionRaw": "교수",
                                           "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                          "collegeName": "정보기술대학",
                                           "department": "COMPUTER_ENGINEERING",
+                                          "departmentName": "컴퓨터공학부",
                                           "name": "홍길동",
                                           "phoneNumber": "032-835-0000",
                                           "email": "professor@example.com"
@@ -301,7 +309,9 @@ public interface LaboratoryApiSpecification {
                                 {
                                   "id": 1,
                                   "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                  "collegeName": "정보기술대학",
                                   "department": "COMPUTER_ENGINEERING",
+                                  "departmentName": "컴퓨터공학부",
                                   "labName": "소프트웨어공학 연구실",
                                   "location": "7호관 401호",
                                   "capacity": {
@@ -313,7 +323,9 @@ public interface LaboratoryApiSpecification {
                                     "id": 1,
                                     "positionRaw": "교수",
                                     "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                    "collegeName": "정보기술대학",
                                     "department": "COMPUTER_ENGINEERING",
+                                    "departmentName": "컴퓨터공학부",
                                     "name": "홍길동",
                                     "phoneNumber": "032-835-0000",
                                     "email": "professor@example.com"
@@ -372,7 +384,9 @@ public interface LaboratoryApiSpecification {
                                       "data": {
                                         "id": 1,
                                         "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                        "collegeName": "정보기술대학",
                                         "department": "COMPUTER_ENGINEERING",
+                                        "departmentName": "컴퓨터공학부",
                                         "labName": "소프트웨어공학 연구실",
                                         "location": "7호관 402호",
                                         "capacity": {
@@ -384,7 +398,9 @@ public interface LaboratoryApiSpecification {
                                           "id": 1,
                                           "positionRaw": "교수",
                                           "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                          "collegeName": "정보기술대학",
                                           "department": "COMPUTER_ENGINEERING",
+                                          "departmentName": "컴퓨터공학부",
                                           "name": "홍길동",
                                           "phoneNumber": "032-835-0000",
                                           "email": "professor@example.com"
@@ -473,7 +489,9 @@ public interface LaboratoryApiSpecification {
                                         {
                                           "id": 1,
                                           "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                          "collegeName": "정보기술대학",
                                           "department": "COMPUTER_ENGINEERING",
+                                          "departmentName": "컴퓨터공학부",
                                           "labName": "소프트웨어공학 연구실",
                                           "location": "7호관 401호",
                                           "capacity": {
@@ -485,7 +503,9 @@ public interface LaboratoryApiSpecification {
                                             "id": 1,
                                             "positionRaw": "교수",
                                             "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                            "collegeName": "정보기술대학",
                                             "department": "COMPUTER_ENGINEERING",
+                                            "departmentName": "컴퓨터공학부",
                                             "name": "홍길동",
                                             "phoneNumber": "032-835-0000",
                                             "email": "professor@example.com"
