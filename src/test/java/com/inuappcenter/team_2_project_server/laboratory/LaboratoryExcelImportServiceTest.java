@@ -78,7 +78,9 @@ class LaboratoryExcelImportServiceTest {
         )).willReturn(Optional.empty())
                 .willReturn(Optional.of(professor));
         given(professorRepository.save(any(Professor.class))).willReturn(professor);
-        given(laboratoryRepository.existsByLabNameAndProfessor("AI연구실", professor)).willReturn(false);
+        given(laboratoryRepository.existsByLabNameAndProfessorAndDepartment(
+                "AI연구실", professor, Department.COMPUTER_ENGINEERING
+        )).willReturn(false);
         given(researchKeywordRepository.findByArea("인공지능")).willReturn(Optional.empty());
         given(researchKeywordRepository.save(any(ResearchArea.class))).willReturn(researchArea);
         given(laboratoryResearchKeywordRepository.existsByLaboratoryAndResearchKeyword(
@@ -108,7 +110,9 @@ class LaboratoryExcelImportServiceTest {
                 "홍길동",
                 "hong@inu.ac.kr"
         )).willReturn(Optional.of(professor));
-        given(laboratoryRepository.existsByLabNameAndProfessor("AI연구실", professor)).willReturn(true);
+        given(laboratoryRepository.existsByLabNameAndProfessorAndDepartment(
+                "AI연구실", professor, Department.COMPUTER_ENGINEERING
+        )).willReturn(true);
 
         laboratoryExcelImportService.importExcel(file);
 

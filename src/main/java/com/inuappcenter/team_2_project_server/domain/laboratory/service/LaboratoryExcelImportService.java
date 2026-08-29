@@ -91,7 +91,7 @@ public class LaboratoryExcelImportService {
             String researchFieldRaw = professorInfo.researchAreaRaw();
 
             // 연구실 중복 검증
-            if (laboratoryRepository.existsByLabNameAndProfessor(row.labName(), professor)) {
+            if (laboratoryRepository.existsByLabNameAndProfessorAndDepartment(row.labName(), professor, row.department())) {
                 continue;
             }
 

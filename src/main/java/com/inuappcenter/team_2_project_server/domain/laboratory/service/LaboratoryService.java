@@ -35,7 +35,9 @@ public class LaboratoryService {
         Professor professor = professorRepository.findById(request.professorId())
                 .orElseThrow(() -> new MyException(ErrorCode.PROFESSOR_NOT_FOUND));
 
-        if (laboratoryRepository.existsByLabNameAndProfessorId(request.labName(), request.professorId())) {
+        if (laboratoryRepository.existsByLabNameAndProfessorIdAndDepartment(
+                request.labName(), request.professorId(), request.department()
+        )) {
             throw new MyException(ErrorCode.DUPLICATED_LABORATORY);
         }
 
