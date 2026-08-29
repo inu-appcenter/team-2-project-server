@@ -14,6 +14,22 @@ jobs:
   # PR/push 시 항상 실행 — 테스트가 깨지면 여기서 잡힘
   test:
     runs-on: ubuntu-latest
+    # @SpringBootTest가 실제 DB 연결을 필요로 해서, 테스트 동안만 쓰고 버릴 Postgres를 띄움
+    # application-test.yml의 spring.datasource 값과 반드시 일치해야 함
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: ttok_ttok_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
 
