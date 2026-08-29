@@ -1,0 +1,14 @@
+services:
+  app:
+    image: ghcr.io/inu-appcenter/team-2-project-server:latest
+    container_name: team-2-project-server
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      # 왼쪽(호스트) 포트는 운영진이 Caddy에 등록해줄 포트와 반드시 같아야 함
+      - "8092:8080"
+    extra_hosts:
+      # 같은 서버에 네이티브로 떠있는 Postgres에 접속하기 위함
+      # (리눅스 Docker는 host.docker.internal을 기본 제공하지 않아 직접 등록)
+      - "host.docker.internal:host-gateway"
