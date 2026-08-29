@@ -62,8 +62,11 @@ jobs:
           cache: 'gradle'
 
       # 운영 설정 파일을 GitHub Secret에서 그대로 복원 (레포에는 절대 커밋 안 함)
+      # src/main/resources는 application*.yml이 전부 gitignore돼있어서
+      # git checkout만으로는 빈 폴더가 아예 생기지 않음 -> 먼저 만들어줘야 함
       - name: Create application.yml
         run: |
+          mkdir -p ./src/main/resources
           cat > ./src/main/resources/application.yml <<'EOF'
           ${{ secrets.APPLICATION_YML }}
           EOF
