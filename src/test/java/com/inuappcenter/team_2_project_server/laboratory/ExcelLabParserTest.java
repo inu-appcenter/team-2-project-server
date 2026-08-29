@@ -77,6 +77,7 @@ class ExcelLabParserTest {
         Workbook workbook = new XSSFWorkbook();
         createLaboratorySheet(workbook);
         createProfessorSheet(workbook);
+        createPublicationSheet(workbook);
         return workbook;
     }
 
@@ -126,6 +127,41 @@ class ExcelLabParserTest {
         row.createCell(5).setCellValue("인공지능");
         row.createCell(6).setCellValue("032-000-0000");
         row.createCell(7).setCellValue("hong@inu.ac.kr");
+    }
+
+    private void createPublicationSheet(Workbook workbook) {
+        Sheet sheet = workbook.createSheet("연구실논문");
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("번호");
+        header.createCell(1).setCellValue("연구실번호");
+        header.createCell(2).setCellValue("학과/전공");
+        header.createCell(3).setCellValue("연구실명");
+        header.createCell(4).setCellValue("지도교수");
+        header.createCell(5).setCellValue("논문명");
+        header.createCell(6).setCellValue("저자");
+        header.createCell(7).setCellValue("게재처");
+        header.createCell(8).setCellValue("연도");
+        header.createCell(9).setCellValue("논문유형");
+        header.createCell(10).setCellValue("상태");
+        header.createCell(11).setCellValue("DOI");
+        header.createCell(12).setCellValue("논문URL");
+        header.createCell(13).setCellValue("출처유형");
+
+        Row row = sheet.createRow(1);
+        row.createCell(0).setCellValue("1");
+        row.createCell(1).setCellValue("1");
+        row.createCell(2).setCellValue("컴퓨터공학부");
+        row.createCell(3).setCellValue("AI연구실");
+        row.createCell(4).setCellValue("홍길동");
+        row.createCell(5).setCellValue("논문 제목");
+        row.createCell(6).setCellValue("홍길동, 이순신");
+        row.createCell(7).setCellValue("IEEE");
+        row.createCell(8).setCellValue("2024");
+        row.createCell(9).setCellValue("학술지");
+        row.createCell(10).setCellValue("게재");
+        row.createCell(11).setCellValue("10.1000/example");
+        row.createCell(12).setCellValue("https://doi.org/10.1000/example");
+        row.createCell(13).setCellValue("국내");
     }
 
     private MockMultipartFile workbookFile(Workbook workbook) throws IOException {
