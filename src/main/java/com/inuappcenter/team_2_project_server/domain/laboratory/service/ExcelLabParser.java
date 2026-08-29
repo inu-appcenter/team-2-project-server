@@ -5,6 +5,7 @@ import com.inuappcenter.team_2_project_server.domain.department.Department;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.LaboratoryCapacityDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.LaboratoryExcelRow;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.ProfessorExcelRow;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.PublicationExcelRow;
 import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
 import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import org.apache.poi.ss.usermodel.*;
@@ -131,6 +132,60 @@ public class ExcelLabParser {
         );
     }
 
+    public List<PublicationExcelRow> parsePublications(MultipartFile file) {
+        try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
+            validateWorkbook(workbook);
+
+            // 엑셀 파일의 첫 번째 시트를 가져옴
+            Sheet sheet = workbook.getSheetAt(2);
+
+            // DataFormatter로 한글
+            DataFormatter formatter = new DataFormatter(Locale.KOREA);
+
+            // 엑셀에서 가져온 행을 저장할 객체
+            List<PublicationExcelRow> rows = new ArrayList<>();
+
+            // 첫 번째 열부터 파싱(0번째 열은 번호)
+            for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                Row row = sheet.getRow(rowIndex);
+
+                if (row == null || isBlankRow(row, formatter, 14)) {
+                    continue;
+                }
+
+                rows.add(toPublicationExcelRow(row, formatter));
+            }
+            return rows;
+        } catch (MyException e) {
+            throw e;
+        } catch (IOException | RuntimeException e) {
+            throw new MyException(ErrorCode.INVALID_EXCEL_FILE);
+        }
+    }
+
+    private PublicationExcelRow toPublicationExcelRow(Row row, DataFormatter formatter) {
+        // enum값을 따로 처리
+        College college = College.fromCollegeName(getString(row, 1, formatter));
+        Department department = Department.fromDepartmentName(getString(row, 2, formatter));
+
+        validateCollegeAndDepartment(college, department);
+
+        return new PublicationExcelRow(
+                getString(row, 1, formatter),
+                department,
+                getString(row, 3, formatter),
+                getString(row, 4, formatter),
+                getString(row, 5, formatter),
+                getString(row, 6, formatter),
+                getString(row, 7, formatter),
+                getString(row, 8, formatter),
+                getString(row, 9, formatter),
+                getString(row, 10, formatter),
+                getString(row, 11, formatter),
+                getString(row, 12, formatter)
+        );
+    }
+
     // 학과가 해당 단과대에 있는 지 확인
     private void validateCollegeAndDepartment(College college, Department department) {
         if (department.getCollegeName() != college) {
@@ -165,12 +220,13 @@ public class ExcelLabParser {
 
     // 엑셀 파일 헤더 검증 메서드
     private void validateWorkbook(Workbook workbook) {
-        if (workbook.getNumberOfSheets() < 2) {
+        if (workbook.getNumberOfSheets() < 3) {
             throw new MyException(ErrorCode.INVALID_EXCEL_SHEET);
         }
 
         validateSheetName(workbook.getSheetAt(0), "연구실");
         validateSheetName(workbook.getSheetAt(1), "교수정보");
+        validateSheetName(workbook.getSheetAt(2), "연구실논문");
 
         DataFormatter formatter = new DataFormatter(Locale.KOREA);
 
@@ -184,6 +240,12 @@ public class ExcelLabParser {
                 workbook.getSheetAt(1),
                 formatter,
                 List.of("번호", "단과대", "학과/전공", "이름", "직책/직급", "연구분야/주전공", "전화번호", "이메일")
+        );
+
+        validateHeader(
+                workbook.getSheetAt(2),
+                formatter,
+                List.of("번호", "연구실번호", "학과/전공", "연구실명", "지도교수", "논문명", "저자", "게재처", "연도", "논문유형", "상태", "DOI", "논문URL", "출처유형")
         );
     }
 
