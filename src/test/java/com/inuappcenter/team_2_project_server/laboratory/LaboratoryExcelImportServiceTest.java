@@ -78,7 +78,9 @@ class LaboratoryExcelImportServiceTest {
         )).willReturn(Optional.empty())
                 .willReturn(Optional.of(professor));
         given(professorRepository.save(any(Professor.class))).willReturn(professor);
-        given(laboratoryRepository.existsByLabNameAndProfessor("AI연구실", professor)).willReturn(false);
+        given(laboratoryRepository.existsByLabNameAndProfessorAndDepartment(
+                "AI연구실", professor, Department.COMPUTER_ENGINEERING
+        )).willReturn(false);
         given(researchKeywordRepository.findByArea("인공지능")).willReturn(Optional.empty());
         given(researchKeywordRepository.save(any(ResearchArea.class))).willReturn(researchArea);
         given(laboratoryResearchKeywordRepository.existsByLaboratoryAndResearchKeyword(
@@ -108,7 +110,9 @@ class LaboratoryExcelImportServiceTest {
                 "홍길동",
                 "hong@inu.ac.kr"
         )).willReturn(Optional.of(professor));
-        given(laboratoryRepository.existsByLabNameAndProfessor("AI연구실", professor)).willReturn(true);
+        given(laboratoryRepository.existsByLabNameAndProfessorAndDepartment(
+                "AI연구실", professor, Department.COMPUTER_ENGINEERING
+        )).willReturn(true);
 
         laboratoryExcelImportService.importExcel(file);
 
@@ -126,13 +130,13 @@ class LaboratoryExcelImportServiceTest {
         Laboratory laboratory = laboratory(professor);
 
         given(excelLabParser.parsePublications(file)).willReturn(List.of(publicationRow));
-        given(laboratoryRepository.findByLabNameAndProfessor_Name("AI연구실", "홍길동"))
-                .willReturn(Optional.of(laboratory));
-        given(publicationRepository.existsByLaboratoryAndTitleAndYearAndPlatform(
+        given(laboratoryRepository.findByLabNameAndDepartmentAndProfessor_Name(
+                "AI연구실", Department.COMPUTER_ENGINEERING, "홍길동"
+        )).willReturn(List.of(laboratory));
+        given(publicationRepository.existsByLaboratoryAndTitleAndYear(
                 laboratory,
                 "논문 제목",
-                "2024",
-                "IEEE"
+                "2024"
         )).willReturn(false);
 
         laboratoryExcelImportService.importExcel(file);
@@ -148,17 +152,45 @@ class LaboratoryExcelImportServiceTest {
         Laboratory laboratory = laboratory(professor);
 
         given(excelLabParser.parsePublications(file)).willReturn(List.of(publicationRow));
-        given(laboratoryRepository.findByLabNameAndProfessor_Name("AI연구실", "홍길동"))
-                .willReturn(Optional.of(laboratory));
-        given(publicationRepository.existsByLaboratoryAndTitleAndYearAndPlatform(
+        given(laboratoryRepository.findByLabNameAndDepartmentAndProfessor_Name(
+                "AI연구실", Department.COMPUTER_ENGINEERING, "홍길동"
+        )).willReturn(List.of(laboratory));
+        given(publicationRepository.existsByLaboratoryAndTitleAndYear(
                 laboratory,
                 "논문 제목",
-                "2024",
-                "IEEE"
+                "2024"
         )).willReturn(true);
 
         laboratoryExcelImportService.importExcel(file);
 
+        verify(publicationRepository, never()).save(any(Publication.class));
+    }
+
+    @Test
+    void importExcel_skips_publication_when_laboratory_name_blank() {
+        MockMultipartFile file = excelFile();
+        PublicationExcelRow publicationRow = new PublicationExcelRow(
+                null,
+                Department.COMPUTER_ENGINEERING,
+                null,
+                "홍길동",
+                "논문 제목",
+                "홍길동",
+                "IEEE",
+                "2024",
+                "학술지",
+                "게재",
+                "10.1000/example",
+                "https://doi.org/10.1000/example"
+        );
+
+        given(excelLabParser.parsePublications(file)).willReturn(List.of(publicationRow));
+
+        laboratoryExcelImportService.importExcel(file);
+
+        verify(laboratoryRepository, never()).findByLabNameAndDepartmentAndProfessor_Name(
+                anyString(), any(Department.class), anyString()
+        );
         verify(publicationRepository, never()).save(any(Publication.class));
     }
 
@@ -168,8 +200,9 @@ class LaboratoryExcelImportServiceTest {
         PublicationExcelRow publicationRow = publicationRow();
 
         given(excelLabParser.parsePublications(file)).willReturn(List.of(publicationRow));
-        given(laboratoryRepository.findByLabNameAndProfessor_Name("AI연구실", "홍길동"))
-                .willReturn(Optional.empty());
+        given(laboratoryRepository.findByLabNameAndDepartmentAndProfessor_Name(
+                "AI연구실", Department.COMPUTER_ENGINEERING, "홍길동"
+        )).willReturn(List.of());
 
         assertThatThrownBy(() -> laboratoryExcelImportService.importExcel(file))
                 .isInstanceOf(MyException.class)

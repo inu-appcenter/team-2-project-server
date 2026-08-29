@@ -91,7 +91,7 @@ public class LaboratoryExcelImportService {
             String researchFieldRaw = professorInfo.researchAreaRaw();
 
             // 연구실 중복 검증
-            if (laboratoryRepository.existsByLabNameAndProfessor(row.labName(), professor)) {
+            if (laboratoryRepository.existsByLabNameAndProfessorAndDepartment(row.labName(), professor, row.department())) {
                 continue;
             }
 
@@ -191,17 +191,23 @@ public class LaboratoryExcelImportService {
      */
     private void savePublications(List<PublicationExcelRow> rows) {
         for (PublicationExcelRow row : rows) {
-            Laboratory laboratory = laboratoryRepository.findByLabNameAndProfessor_Name(row.laboratoryName(), row.professorName())
-                    .orElseThrow(() -> new MyException(ErrorCode.LABORATORY_NOT_FOUND));
+            // 연구실이 존재하지 않는 논문은 스킵
+            if (row.laboratoryName() == null || row.laboratoryName().isBlank()) {
+                continue;
+            }
 
+            // 연구실이 있는 논문만 아래 로직을 탐
+            List<Laboratory> laboratories = laboratoryRepository.findByLabNameAndDepartmentAndProfessor_Name(row.laboratoryName(), row.department(), row.professorName());
+
+            if (laboratories.isEmpty()) {
+                throw new MyException(ErrorCode.LABORATORY_NOT_FOUND);
+            }
+
+            Laboratory laboratory = laboratories.getFirst();
             Professor professor = laboratory.getProfessor();
 
-            if (publicationRepository.existsByLaboratoryAndTitleAndYearAndPlatform(
-                    laboratory,
-                    row.title(),
-                    row.year(),
-                    row.platform()
-            )) {
+            if (publicationRepository.existsByLaboratoryAndTitleAndYear(
+                    laboratory, row.title(), row.year())) {
                 continue;
             }
 

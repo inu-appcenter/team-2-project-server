@@ -6,11 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PublicationRepository extends JpaRepository<Publication, Long> {
 
-    boolean existsByLaboratoryAndTitleAndYearAndPlatform(
-            Laboratory laboratory,
-            String title,
-            String year,
-            String platform
-    );
-
+    boolean existsByLaboratoryAndTitleAndYear(Laboratory laboratory, String title, String year);
 }
