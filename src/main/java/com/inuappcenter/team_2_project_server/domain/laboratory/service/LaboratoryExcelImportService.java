@@ -196,11 +196,11 @@ public class LaboratoryExcelImportService {
 
             Professor professor = laboratory.getProfessor();
 
-            if (publicationRepository.existsByLaboratoryAndTitleAndYearAndSource(
+            if (publicationRepository.existsByLaboratoryAndTitleAndYearAndPlatform(
                     laboratory,
                     row.title(),
                     row.year(),
-                    row.source()
+                    row.platform()
             )) {
                 continue;
             }
@@ -210,7 +210,7 @@ public class LaboratoryExcelImportService {
                     professor,
                     row.title(),
                     row.researchersRaw(),
-                    row.source(),
+                    row.platform(),
                     row.year(),
                     row.type(),
                     row.status(),
