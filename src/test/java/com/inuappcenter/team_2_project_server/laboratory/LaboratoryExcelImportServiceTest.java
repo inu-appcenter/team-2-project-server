@@ -5,16 +5,21 @@ import com.inuappcenter.team_2_project_server.domain.department.Department;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.LaboratoryCapacityDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.LaboratoryExcelRow;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.ProfessorExcelRow;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.parse.PublicationExcelRow;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.Laboratory;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.LaboratoryResearchArea;
+import com.inuappcenter.team_2_project_server.domain.laboratory.entity.Publication;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.ResearchArea;
 import com.inuappcenter.team_2_project_server.domain.laboratory.repository.LaboratoryRepository;
 import com.inuappcenter.team_2_project_server.domain.laboratory.repository.LaboratoryResearchKeywordRepository;
+import com.inuappcenter.team_2_project_server.domain.laboratory.repository.PublicationRepository;
 import com.inuappcenter.team_2_project_server.domain.laboratory.repository.ResearchKeywordRepository;
 import com.inuappcenter.team_2_project_server.domain.laboratory.service.ExcelLabParser;
 import com.inuappcenter.team_2_project_server.domain.laboratory.service.LaboratoryExcelImportService;
 import com.inuappcenter.team_2_project_server.domain.member.entity.Professor;
 import com.inuappcenter.team_2_project_server.domain.member.repository.ProfessorRepository;
+import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
+import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
@@ -22,6 +27,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -35,6 +41,7 @@ class LaboratoryExcelImportServiceTest {
     private ResearchKeywordRepository researchKeywordRepository;
     private LaboratoryResearchKeywordRepository laboratoryResearchKeywordRepository;
     private LaboratoryExcelImportService laboratoryExcelImportService;
+    private PublicationRepository publicationRepository;
 
     @BeforeEach
     void setUp() {
@@ -43,12 +50,14 @@ class LaboratoryExcelImportServiceTest {
         laboratoryRepository = mock(LaboratoryRepository.class);
         researchKeywordRepository = mock(ResearchKeywordRepository.class);
         laboratoryResearchKeywordRepository = mock(LaboratoryResearchKeywordRepository.class);
+        publicationRepository = mock(PublicationRepository.class);
         laboratoryExcelImportService = new LaboratoryExcelImportService(
                 excelLabParser,
                 professorRepository,
                 laboratoryRepository,
                 researchKeywordRepository,
-                laboratoryResearchKeywordRepository
+                laboratoryResearchKeywordRepository,
+                publicationRepository
         );
     }
 
@@ -109,6 +118,67 @@ class LaboratoryExcelImportServiceTest {
         verify(laboratoryResearchKeywordRepository, never()).save(any(LaboratoryResearchArea.class));
     }
 
+    @Test
+    void importExcel_saves_publication_when_not_duplicate() {
+        MockMultipartFile file = excelFile();
+        PublicationExcelRow publicationRow = publicationRow();
+        Professor professor = professor();
+        Laboratory laboratory = laboratory(professor);
+
+        given(excelLabParser.parsePublications(file)).willReturn(List.of(publicationRow));
+        given(laboratoryRepository.findByLabNameAndProfessor_Name("AI연구실", "홍길동"))
+                .willReturn(Optional.of(laboratory));
+        given(publicationRepository.existsByLaboratoryAndTitleAndYearAndPlatform(
+                laboratory,
+                "논문 제목",
+                "2024",
+                "IEEE"
+        )).willReturn(false);
+
+        laboratoryExcelImportService.importExcel(file);
+
+        verify(publicationRepository).save(any(Publication.class));
+    }
+
+    @Test
+    void importExcel_skips_publication_when_already_exists() {
+        MockMultipartFile file = excelFile();
+        PublicationExcelRow publicationRow = publicationRow();
+        Professor professor = professor();
+        Laboratory laboratory = laboratory(professor);
+
+        given(excelLabParser.parsePublications(file)).willReturn(List.of(publicationRow));
+        given(laboratoryRepository.findByLabNameAndProfessor_Name("AI연구실", "홍길동"))
+                .willReturn(Optional.of(laboratory));
+        given(publicationRepository.existsByLaboratoryAndTitleAndYearAndPlatform(
+                laboratory,
+                "논문 제목",
+                "2024",
+                "IEEE"
+        )).willReturn(true);
+
+        laboratoryExcelImportService.importExcel(file);
+
+        verify(publicationRepository, never()).save(any(Publication.class));
+    }
+
+    @Test
+    void importExcel_throws_when_laboratory_not_found_for_publication() {
+        MockMultipartFile file = excelFile();
+        PublicationExcelRow publicationRow = publicationRow();
+
+        given(excelLabParser.parsePublications(file)).willReturn(List.of(publicationRow));
+        given(laboratoryRepository.findByLabNameAndProfessor_Name("AI연구실", "홍길동"))
+                .willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> laboratoryExcelImportService.importExcel(file))
+                .isInstanceOf(MyException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.LABORATORY_NOT_FOUND);
+
+        verify(publicationRepository, never()).save(any(Publication.class));
+    }
+
     private MockMultipartFile excelFile() {
         return new MockMultipartFile(
                 "file",
@@ -140,6 +210,38 @@ class LaboratoryExcelImportServiceTest {
                 "7호관 401호",
                 "https://lab.example.com",
                 new LaboratoryCapacityDto(6, 7)
+        );
+    }
+
+    private PublicationExcelRow publicationRow() {
+        return new PublicationExcelRow(
+                "1",
+                Department.COMPUTER_ENGINEERING,
+                "AI연구실",
+                "홍길동",
+                "논문 제목",
+                "홍길동, 이순신",
+                "IEEE",
+                "2024",
+                "학술지",
+                "게재",
+                "10.1000/example",
+                "https://doi.org/10.1000/example"
+        );
+    }
+
+    private Laboratory laboratory(Professor professor) {
+        return Laboratory.create(
+                College.COLLEGE_OF_INFORMATION_TECHNOLOGY,
+                Department.COMPUTER_ENGINEERING,
+                "AI연구실",
+                "7호관 401호",
+                6,
+                7,
+                null,
+                professor,
+                "https://lab.example.com",
+                null
         );
     }
 
