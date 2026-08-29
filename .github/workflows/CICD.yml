@@ -2,9 +2,8 @@ name: CI & CD
 
 on:
   pull_request:
-    branches: [ "main" ]
-  push:
-    branches: [ "main" ]
+    branches: [ "main" ] # PR 올릴 때마다 test job만 자동 실행
+  workflow_dispatch: { } # deploy는 Actions 탭에서 수동으로 "Run workflow" 눌러야만 실행
 
 permissions:
   contents: read
@@ -46,9 +45,10 @@ jobs:
       - name: Run tests
         run: ./gradlew test
 
-  # main에 push(=PR 머지)됐을 때만 실행 — 빌드 후 서버까지 배포
+  # Actions 탭에서 수동으로 "Run workflow"를 눌렀을 때만 배포 (자동 배포 없음)
+  # 실수로 다른 브랜치를 선택하고 실행하는 걸 막기 위해 main 브랜치일 때만 허용
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     needs: test
     runs-on: ubuntu-latest
     steps:
