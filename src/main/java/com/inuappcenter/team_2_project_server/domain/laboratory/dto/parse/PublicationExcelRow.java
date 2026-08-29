@@ -9,7 +9,7 @@ public record PublicationExcelRow(
         String professorName,
         String title,
         String researchersRaw,
-        String source,
+        String platform,
         String year,
         String type,
         String status,

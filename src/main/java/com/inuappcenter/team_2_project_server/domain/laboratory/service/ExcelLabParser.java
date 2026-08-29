@@ -165,10 +165,7 @@ public class ExcelLabParser {
 
     private PublicationExcelRow toPublicationExcelRow(Row row, DataFormatter formatter) {
         // enum값을 따로 처리
-        College college = College.fromCollegeName(getString(row, 1, formatter));
         Department department = Department.fromDepartmentName(getString(row, 2, formatter));
-
-        validateCollegeAndDepartment(college, department);
 
         return new PublicationExcelRow(
                 getString(row, 1, formatter),

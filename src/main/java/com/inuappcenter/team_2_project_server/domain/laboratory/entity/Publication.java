@@ -25,6 +25,7 @@ public class Publication {
 
     String title;
 
+    @Column(name = "researchers_raw")
     String researchersRaw;
 
     String platform;
