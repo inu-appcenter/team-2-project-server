@@ -102,9 +102,9 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST_ADDRESS }}
-          username: ${{ secrets.SERVER_USERNAME }}
+          username: ${{ secrets.APPCENTER_SERVER_USERNAME }}
           key: ${{ secrets.SERVER_KEY }}
-          port: ${{ secrets.SERVER_PORT }}
+          port: ${{ secrets.APPCENTER_SERVER_PORT }}
           source: "docker-compose.yml"
           target: ${{ secrets.MOUNT_PATH }}
 
@@ -112,9 +112,9 @@ jobs:
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST_ADDRESS }}
-          username: ${{ secrets.SERVER_USERNAME }}
+          username: ${{ secrets.APPCENTER_SERVER_USERNAME }}
           key: ${{ secrets.SERVER_KEY }}
-          port: ${{ secrets.SERVER_PORT }}
+          port: ${{ secrets.APPCENTER_SERVER_PORT }}
           script: |
             cd ${{ secrets.MOUNT_PATH }}
             docker compose pull app
