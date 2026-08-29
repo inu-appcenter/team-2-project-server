@@ -41,4 +41,9 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging {
+        // 실패 원인 메시지가 콘솔(CI 로그 포함)에 바로 보이도록
+        exceptionFormat = "full"
+        events "failed"
+    }
 }

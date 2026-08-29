@@ -9,6 +9,8 @@ out/
 
 # Local Spring configuration with secrets
 application*.yml
+# 단, 테스트용 설정은 비밀값이 없고 CI에도 필요해서 커밋함
+!src/test/resources/application*.yml
 
 # Environment files
 .env

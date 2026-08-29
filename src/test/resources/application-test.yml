@@ -1,0 +1,17 @@
+oracle:
+  enabled: false
+
+spring:
+  datasource:
+    jdbc-url: jdbc:postgresql://localhost:5432/ttok_ttok_test
+    username: test
+    password: test
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+jwt:
+  secret: "test-jwt-secret-key-must-be-long-enough-for-hs256-tests"
+  access-token-expiration-millis: 3600000
+  refresh-token-expiration-millis: 1209600000
