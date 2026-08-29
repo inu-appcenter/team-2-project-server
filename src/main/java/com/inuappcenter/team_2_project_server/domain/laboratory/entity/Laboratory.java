@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
         name = "laboratory",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "uk_laboratory_lab_name_professor",
-                        columnNames = {"lab_name", "professor_id"}
+                        name = "uk_laboratory_lab_name_professor_department",
+                        columnNames = {"lab_name", "professor_id", "department"}
                 )
         }
 )
