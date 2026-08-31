@@ -23,9 +23,12 @@ public class Publication {
     @JoinColumn(name = "professor_id")
     Professor professor;
 
+    // 논문 제목은 부제/영문 제목 등으로 255자를 쉽게 넘겨서 길이 제한 없이 저장
+    @Column(columnDefinition = "TEXT")
     String title;
 
-    @Column(name = "researchers_raw")
+    // 공저자가 많으면 목록이 255자를 넘길 수 있어서 길이 제한 없이 저장
+    @Column(name = "researchers_raw", columnDefinition = "TEXT")
     String researchersRaw;
 
     String platform;
