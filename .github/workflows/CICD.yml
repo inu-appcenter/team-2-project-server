@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  packages: write # GHCR에 이미지 push 하기 위해 필요
 
 jobs:
   # PR/push 시 항상 실행 — 테스트가 깨지면 여기서 잡힘
@@ -79,12 +78,11 @@ jobs:
       - name: Build jar
         run: ./gradlew bootJar -x test
 
-      - name: Log in to GHCR
+      - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -94,7 +92,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/team-2-project-server:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ttok-ttok:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

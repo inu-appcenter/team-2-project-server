@@ -1,7 +1,7 @@
 services:
   app:
-    image: ghcr.io/inu-appcenter/team-2-project-server:latest
-    container_name: team-2-project-server
+    image: siillvergun/ttok-ttok:latest
+    container_name: ttok-ttok
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: prod
