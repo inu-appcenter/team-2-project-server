@@ -7,7 +7,7 @@ import java.util.List;
 public record LaboratoryUpdateRequestDto(
         String labName,
         String location,
-        @Valid LaboratoryCapacityUpdateDto capacity,
+        @Valid LaboratoryCapacityUpdateRequestDto capacity,
         String introduction,
         String labUrl,
         List<String> researchAreas

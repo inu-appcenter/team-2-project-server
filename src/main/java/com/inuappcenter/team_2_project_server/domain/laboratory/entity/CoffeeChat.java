@@ -1,0 +1,65 @@
+package com.inuappcenter.team_2_project_server.domain.laboratory.entity;
+
+import com.inuappcenter.team_2_project_server.domain.laboratory.enums.ContactType;
+import com.inuappcenter.team_2_project_server.domain.member.entity.Researcher;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table
+public class CoffeeChat {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "laboratory_id")
+    Laboratory laboratory;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "researcher_id", unique = true)
+    Researcher researcher;
+
+    @Enumerated(EnumType.STRING)
+    ContactType contactType;
+
+    String contactValue;
+
+    private CoffeeChat(
+            Laboratory laboratory,
+            Researcher researcher,
+            ContactType contactType,
+            String contactValue
+    ) {
+        this.laboratory = laboratory;
+        this.researcher = researcher;
+        this.contactType = contactType;
+        this.contactValue = contactValue;
+    }
+
+    public static CoffeeChat create(
+            Laboratory laboratory,
+            Researcher researcher,
+            ContactType contactType,
+            String contactValue
+    ) {
+        return new CoffeeChat(laboratory, researcher, contactType, contactValue);
+    }
+
+    public void update(
+            ContactType contactType,
+            String contactValue
+    ) {
+        this.contactType = contactType;
+        this.contactValue = contactValue;
+    }
+
+    public boolean isOwnedBy(Long memberId) {
+        return researcher.getMember().getId().equals(memberId);
+    }
+}

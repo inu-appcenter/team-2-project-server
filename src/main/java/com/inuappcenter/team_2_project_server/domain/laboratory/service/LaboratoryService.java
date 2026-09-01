@@ -1,6 +1,6 @@
 package com.inuappcenter.team_2_project_server.domain.laboratory.service;
 
-import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryCapacityUpdateDto;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryCapacityUpdateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryCreateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryUpdateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.response.LaboratoryResponseDto;
@@ -92,7 +92,7 @@ public class LaboratoryService {
         Laboratory laboratory = laboratoryRepository.findById(laboratoryId)
                 .orElseThrow(() -> new MyException(ErrorCode.LABORATORY_NOT_FOUND));
 
-        LaboratoryCapacityUpdateDto capacity = request.capacity();
+        LaboratoryCapacityUpdateRequestDto capacity = request.capacity();
 
 
         laboratory.updateLab(
