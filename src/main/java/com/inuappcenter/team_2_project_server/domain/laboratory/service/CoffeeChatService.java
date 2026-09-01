@@ -12,6 +12,7 @@ import com.inuappcenter.team_2_project_server.domain.member.repository.Researche
 import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
 import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +45,7 @@ public class CoffeeChatService {
     public CoffeeChatResponseDto getMyCoffeeChat(Long memberId) {
         return coffeeChatRepository.findByResearcherMemberId(memberId)
                 .map(CoffeeChatResponseDto::from)
-                .orElseThrow(() -> new MyException(ErrorCode.COFFEE_CHAT_NOT_FOUND));
+                .orElse(null);
     }
 
     /**
@@ -68,7 +69,12 @@ public class CoffeeChatService {
                 request.contactValue()
         );
 
-        coffeeChatRepository.save(coffeeChat);
+        // 더블클릭으로 인한 유니크 제약 조건 발생 방지 로직
+        try {
+            coffeeChatRepository.save(coffeeChat);
+        } catch (DataIntegrityViolationException e) {
+            throw new MyException(ErrorCode.COFFEE_CHAT_ALREADY_EXISTS);
+        }
 
         return CoffeeChatResponseDto.from(coffeeChat);
     }
