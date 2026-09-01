@@ -17,6 +17,7 @@ public class Researcher {
 
     String iris;
 
+    @Column(name = "iris_yn")
     boolean irisYN;
 
     @OneToOne(fetch = FetchType.LAZY)
