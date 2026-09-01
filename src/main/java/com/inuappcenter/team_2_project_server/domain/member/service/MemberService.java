@@ -46,6 +46,7 @@ public class MemberService {
                                 authResult.studentNumber(),
                                 null,
                                 null,
+                                null,
                                 authResult.role()
                         )
                 ));
@@ -116,6 +117,7 @@ public class MemberService {
         Member member = Member.create(
                 request.studentNumber(),
                 request.nickName(),
+                request.college(),
                 request.department(),
                 request.email()
         );
