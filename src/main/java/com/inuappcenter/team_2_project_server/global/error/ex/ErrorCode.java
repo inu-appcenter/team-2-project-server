@@ -33,7 +33,9 @@ public enum ErrorCode {
     DUPLICATED_PROFESSOR_IN_EXCEL(HttpStatus.BAD_REQUEST, "DUPLICATED_PROFESSOR_IN_EXCEL", "엑셀 시트에 동일한 교수가 존재합니다."),
     LABORATORY_NOT_FOUND(HttpStatus.NOT_FOUND, "LABORATORY_NOT_FOUND", "존재하지 않는 연구실입니다."),
     INVALID_SEARCH_KEYWORD(HttpStatus.BAD_REQUEST, "NO_SEARCH_KEYWORD", "허용하지 않는 검색어입니다."),
-    ;
+    RESEARCHER_NOT_FOUND(HttpStatus.NOT_FOUND, "RESEARCHER_NOT_FOUND", "존재하지 않는 연구생입니다."),
+    COFFEE_CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "COFFEE_CHAT_NOT_FOUND", "존재하지 않는 커피챗입니다."),
+    COFFEE_CHAT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "COFFEE_CHAT_ALREADY_EXISTS", "1개의 커피챗만 생성 가능합니다.");
 
     private final HttpStatus status;
     private final String code;
