@@ -1,5 +1,6 @@
 package com.inuappcenter.team_2_project_server.domain.member.entity;
 
+import com.inuappcenter.team_2_project_server.domain.department.College;
 import com.inuappcenter.team_2_project_server.domain.department.Department;
 import com.inuappcenter.team_2_project_server.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -26,27 +27,31 @@ public class Member extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    private Long id;
-
+    Long id;
+    
     @Column(name = "student_number", nullable = false, unique = true)
-    private String studentNumber;
+    String studentNumber;
 
     @Column(name = "nickname")
-    private String nickName;
+    String nickName;
 
     @Enumerated(EnumType.STRING)
-    private Department department;
+    College college;
 
-    private String email;
+    @Enumerated(EnumType.STRING)
+    Department department;
+
+    String email;
 
     @Column(name = "last_login_at")
-    private LocalDateTime lastLoginAt;
+    LocalDateTime lastLoginAt;
 
-    private String role;
+    String role;
 
     private Member(
             String studentNumber,
             String nickName,
+            College college,
             Department department,
             String email,
             LocalDateTime lastLoginAt,
@@ -54,6 +59,7 @@ public class Member extends BaseEntity implements UserDetails {
     ) {
         this.studentNumber = studentNumber;
         this.nickName = nickName;
+        this.college = college;
         this.department = department;
         this.email = email;
         this.lastLoginAt = lastLoginAt;
@@ -63,21 +69,23 @@ public class Member extends BaseEntity implements UserDetails {
     public static Member create(
             String studentNumber,
             String nickName,
+            College college,
             Department department,
             String email
     ) {
-        return new Member(studentNumber, nickName, department, email, LocalDateTime.now(), "ROLE_USER");
+        return new Member(studentNumber, nickName, college, department, email, LocalDateTime.now(), "ROLE_USER");
     }
 
     // 외부에서 role을 받아서 member를 만드는 정적 팩토리 메서드
     public static Member createWithRole(
             String studentNumber,
             String nickName,
+            College college,
             Department department,
             String email,
             String role
     ) {
-        return new Member(studentNumber, nickName, department, email, LocalDateTime.now(), role);
+        return new Member(studentNumber, nickName, college, department, email, LocalDateTime.now(), role);
     }
 
     @Override
