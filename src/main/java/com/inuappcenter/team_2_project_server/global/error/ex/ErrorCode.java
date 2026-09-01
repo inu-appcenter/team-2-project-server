@@ -36,7 +36,6 @@ public enum ErrorCode {
     RESEARCHER_NOT_FOUND(HttpStatus.NOT_FOUND, "RESEARCHER_NOT_FOUND", "존재하지 않는 연구생입니다."),
     COFFEE_CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "COFFEE_CHAT_NOT_FOUND", "존재하지 않는 커피챗입니다."),
     COFFEE_CHAT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "COFFEE_CHAT_ALREADY_EXISTS", "1개의 커피챗만 생성 가능합니다."),
-    OPEN_CHAT_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "OPEN_CHAT_NOT_AVAILABLE", "오픈채팅으로 연결 할 수 없는 URL입니다."),
     ;
 
     private final HttpStatus status;
