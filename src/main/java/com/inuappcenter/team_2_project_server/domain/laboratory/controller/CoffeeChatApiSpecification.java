@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +45,7 @@ public interface CoffeeChatApiSpecification {
                                           "laboratoryName": "소프트웨어공학 연구실",
                                           "researcherId": 1,
                                           "contactType": "KAKAO_TALK",
-                                          "content": "학부연구생으로 참여하고 싶어 커피챗을 신청합니다."
+                                          "contactValue": "https://open.kakao.com/o/gABCdef"
                                         }
                                       ],
                                       "code": null,
@@ -93,40 +94,10 @@ public interface CoffeeChatApiSpecification {
                                         "laboratoryName": "소프트웨어공학 연구실",
                                         "researcherId": 1,
                                         "contactType": "KAKAO_TALK",
-                                        "content": "학부연구생으로 참여하고 싶어 커피챗을 신청합니다."
+                                        "contactValue": "https://open.kakao.com/o/gABCdef"
                                       },
                                       "code": null,
                                       "message": "내 커피챗 조회 성공"
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "인증 토큰 누락, 만료 또는 유효하지 않은 토큰",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "data": null,
-                                      "code": "TOKEN_INVALID",
-                                      "message": "유효하지 않은 토큰입니다."
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "신청한 커피챗이 없음",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "data": null,
-                                      "code": "COFFEE_CHAT_NOT_FOUND",
-                                      "message": "존재하지 않는 커피챗입니다."
                                     }
                                     """)
                     )
@@ -153,7 +124,7 @@ public interface CoffeeChatApiSpecification {
                             {
                               "laboratoryId": 1,
                               "contactType": "KAKAO_TALK",
-                              "content": "학부연구생으로 참여하고 싶어 커피챗을 신청합니다."
+                              "contactValue": "https://open.kakao.com/o/gABCdef"
                             }
                             """)
             )
@@ -173,78 +144,18 @@ public interface CoffeeChatApiSpecification {
                                         "laboratoryName": "소프트웨어공학 연구실",
                                         "researcherId": 1,
                                         "contactType": "KAKAO_TALK",
-                                        "content": "학부연구생으로 참여하고 싶어 커피챗을 신청합니다."
+                                        "contactValue": "https://open.kakao.com/o/gABCdef"
                                       },
                                       "code": null,
                                       "message": "커피챗 생성 성공"
                                     }
                                     """)
                     )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "이미 신청한 커피챗이 존재함",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "data": null,
-                                      "code": "COFFEE_CHAT_ALREADY_EXISTS",
-                                      "message": "1개의 커피챗만 생성 가능합니다."
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "인증 토큰 누락, 만료 또는 유효하지 않은 토큰",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "data": null,
-                                      "code": "TOKEN_INVALID",
-                                      "message": "유효하지 않은 토큰입니다."
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "존재하지 않는 연구실 또는 연구생",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = {
-                                    @ExampleObject(
-                                            name = "존재하지 않는 연구실",
-                                            value = """
-                                                    {
-                                                      "data": null,
-                                                      "code": "LABORATORY_NOT_FOUND",
-                                                      "message": "존재하지 않는 연구실입니다."
-                                                    }
-                                                    """
-                                    ),
-                                    @ExampleObject(
-                                            name = "존재하지 않는 연구생",
-                                            value = """
-                                                    {
-                                                      "data": null,
-                                                      "code": "RESEARCHER_NOT_FOUND",
-                                                      "message": "존재하지 않는 연구생입니다."
-                                                    }
-                                                    """
-                                    )
-                            }
-                    )
             )
     })
     ResponseEntity<ResponseDto<CoffeeChatResponseDto>> createCoffeeChat(
             @AuthenticationPrincipal Member member,
-            @RequestBody CoffeeChatCreateRequestDto request
+            @Valid @RequestBody CoffeeChatCreateRequestDto request
     );
 
     @Operation(
@@ -260,7 +171,7 @@ public interface CoffeeChatApiSpecification {
                     examples = @ExampleObject(value = """
                             {
                               "contactType": "EMAIL",
-                              "content": "이메일로 연락 부탁드립니다."
+                              "contactValue": "researcher@inu.ac.kr"
                             }
                             """)
             )
@@ -280,55 +191,10 @@ public interface CoffeeChatApiSpecification {
                                         "laboratoryName": "소프트웨어공학 연구실",
                                         "researcherId": 1,
                                         "contactType": "EMAIL",
-                                        "content": "이메일로 연락 부탁드립니다."
+                                        "contactValue": "researcher@inu.ac.kr"
                                       },
                                       "code": null,
                                       "message": "커피챗 수정 성공"
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "인증 토큰 누락, 만료 또는 유효하지 않은 토큰",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "data": null,
-                                      "code": "TOKEN_INVALID",
-                                      "message": "유효하지 않은 토큰입니다."
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "본인이 신청한 커피챗이 아님",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "data": null,
-                                      "code": "ACCESS_DENIED",
-                                      "message": "접근 권한이 없습니다."
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "존재하지 않는 커피챗",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "data": null,
-                                      "code": "COFFEE_CHAT_NOT_FOUND",
-                                      "message": "존재하지 않는 커피챗입니다."
                                     }
                                     """)
                     )
@@ -336,7 +202,7 @@ public interface CoffeeChatApiSpecification {
     })
     ResponseEntity<ResponseDto<CoffeeChatResponseDto>> updateCoffeeChat(
             @AuthenticationPrincipal Member member,
-            @RequestBody CoffeeChatUpdateRequestDto request,
+            @Valid @RequestBody CoffeeChatUpdateRequestDto request,
             @Parameter(description = "수정할 커피챗 ID", required = true, example = "1")
             @PathVariable Long coffeeChatId
     );
@@ -357,51 +223,6 @@ public interface CoffeeChatApiSpecification {
                                       "data": 1,
                                       "code": null,
                                       "message": "커피챗 삭제 성공"
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "인증 토큰 누락, 만료 또는 유효하지 않은 토큰",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "data": null,
-                                      "code": "TOKEN_INVALID",
-                                      "message": "유효하지 않은 토큰입니다."
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "본인이 신청한 커피챗이 아님",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "data": null,
-                                      "code": "ACCESS_DENIED",
-                                      "message": "접근 권한이 없습니다."
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "존재하지 않는 커피챗",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseDto.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "data": null,
-                                      "code": "COFFEE_CHAT_NOT_FOUND",
-                                      "message": "존재하지 않는 커피챗입니다."
                                     }
                                     """)
                     )
