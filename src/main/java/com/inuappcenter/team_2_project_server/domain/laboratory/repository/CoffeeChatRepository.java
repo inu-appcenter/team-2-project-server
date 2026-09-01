@@ -1,0 +1,15 @@
+package com.inuappcenter.team_2_project_server.domain.laboratory.repository;
+
+import com.inuappcenter.team_2_project_server.domain.laboratory.entity.CoffeeChat;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface CoffeeChatRepository extends JpaRepository<CoffeeChat, Long> {
+    List<CoffeeChat> findAllByLaboratoryId(Long laboratoryId);
+
+    Optional<CoffeeChat> findByResearcherMemberId(Long memberId);
+
+    boolean existsByResearcherMemberId(Long memberId);
+}
