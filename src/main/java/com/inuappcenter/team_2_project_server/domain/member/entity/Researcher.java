@@ -15,10 +15,8 @@ public class Researcher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String iris;
-
-    @Column(name = "iris_yn")
-    boolean irisYN;
+    @Column(name = "validate_yn")
+    boolean validateYN;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", unique = true)
@@ -27,4 +25,19 @@ public class Researcher {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "laboratory_id")
     Laboratory laboratory;
+
+    private Researcher(
+            Member member,
+            Laboratory laboratory
+    ) {
+        this.member = member;
+        this.laboratory = laboratory;
+    }
+
+    public static Researcher create(
+            Member member,
+            Laboratory laboratory
+    ) {
+        return new Researcher(member, laboratory);
+    }
 }
