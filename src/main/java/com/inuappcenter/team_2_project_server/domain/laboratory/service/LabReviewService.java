@@ -1,6 +1,7 @@
 package com.inuappcenter.team_2_project_server.domain.laboratory.service;
 
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LabReviewRequestDto;
+import com.inuappcenter.team_2_project_server.domain.laboratory.dto.response.LabReviewOptionsResponseDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.response.LabReviewResponseDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.LabReview;
 import com.inuappcenter.team_2_project_server.domain.laboratory.repository.LabReviewRepository;
@@ -9,14 +10,13 @@ import com.inuappcenter.team_2_project_server.domain.member.repository.Researche
 import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
 import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class LabReviewService {
@@ -42,9 +42,23 @@ public class LabReviewService {
                 request.weeklyMeeting(),
                 request.doings()
         );
-        labReviewRepository.save(review);
+
+        // 동시 제출로 researcher_id 유니크 제약에 걸리면 도메인 에러로 변환
+        try {
+            labReviewRepository.save(review);
+        } catch (DataIntegrityViolationException e) {
+            throw new MyException(ErrorCode.LAB_REVIEW_ALREADY_EXISTS);
+        }
 
         return LabReviewResponseDto.from(review);
+    }
+
+    /**
+     * 리뷰 작성 폼 기본 선택지 조회
+     */
+    @Transactional(readOnly = true)
+    public LabReviewOptionsResponseDto getOptions() {
+        return LabReviewOptionsResponseDto.defaults();
     }
 
     /**
