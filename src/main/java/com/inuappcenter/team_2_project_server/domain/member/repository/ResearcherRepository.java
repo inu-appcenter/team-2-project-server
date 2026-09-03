@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface ResearcherRepository extends JpaRepository<Researcher, Long> {
     Optional<Researcher> findByMemberId(Long memberId);
+
+    boolean existsByMemberId(Long memberId);
 }

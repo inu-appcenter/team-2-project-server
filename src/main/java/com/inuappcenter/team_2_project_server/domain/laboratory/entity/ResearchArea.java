@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 public class ResearchArea extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "research_area_id")
     private Long id;
 
     private String area;

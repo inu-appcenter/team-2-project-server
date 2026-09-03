@@ -94,6 +94,7 @@ public class MemberController implements MemberApiSpecification {
             @AuthenticationPrincipal Member member
     ) {
         memberService.deleteMember(member.getId());
+        log.info(member.getId() + " 유저가 삭제되었습니다.");
         return ResponseEntity.ok(ResponseDto.of(member.getId(), "유저 삭제 성공"));
     }
 }
