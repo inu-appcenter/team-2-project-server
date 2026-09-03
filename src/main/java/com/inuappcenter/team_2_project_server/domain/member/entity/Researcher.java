@@ -1,6 +1,8 @@
 package com.inuappcenter.team_2_project_server.domain.member.entity;
 
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.Laboratory;
+import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
+import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +24,7 @@ public class Researcher {
     @JoinColumn(name = "member_id", unique = true)
     Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "laboratory_id", nullable = false)
     Laboratory laboratory;
 
@@ -43,6 +45,9 @@ public class Researcher {
             Laboratory laboratory,
             String name
     ) {
+        if (laboratory == null) {
+            throw new MyException(ErrorCode.LABORATORY_NOT_FOUND);
+        }
         return new Researcher(member, laboratory, name);
     }
 }
