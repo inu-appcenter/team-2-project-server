@@ -37,6 +37,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6' // JWT claims를 JSON으로 처리할 때 필요
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3' // 스웨거 의존성
     implementation 'org.apache.poi:poi-ooxml:5.4.1' // 엑셀 파싱을 위한 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-webflux' // 웹 클라이언트 의존성(AI API 호출에 사용)
 }
 
 tasks.named('test') {
