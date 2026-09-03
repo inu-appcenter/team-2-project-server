@@ -15,6 +15,7 @@ public class CoffeeChat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "coffee_chat_id")
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

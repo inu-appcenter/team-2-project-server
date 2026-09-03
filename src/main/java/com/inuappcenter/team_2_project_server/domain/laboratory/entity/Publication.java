@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class Publication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "publication_id")
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
