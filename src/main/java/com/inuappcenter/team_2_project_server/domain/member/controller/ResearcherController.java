@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/researcher")
-public class ResearcherController {
+public class ResearcherController implements ResearcherApiSpecification {
 
     private final ResearcherService researcherService;
 
