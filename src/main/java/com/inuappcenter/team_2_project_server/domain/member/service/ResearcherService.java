@@ -26,7 +26,7 @@ public class ResearcherService {
      * 연구자 등록
      */
     @Transactional
-    public ResearcherResponseDto register(Long memberId, Long laboratoryId) {
+    public ResearcherResponseDto register(Long memberId, Long laboratoryId, String name) {
         if (researcherRepository.existsByMemberId(memberId)) {
             throw new MyException(ErrorCode.RESEARCHER_ALREADY_EXISTS);
         }
@@ -37,7 +37,7 @@ public class ResearcherService {
         Laboratory laboratory = laboratoryRepository.findById(laboratoryId)
                 .orElseThrow(() -> new MyException(ErrorCode.LABORATORY_NOT_FOUND));
 
-        Researcher researcher = Researcher.create(member, laboratory);
+        Researcher researcher = Researcher.create(member, laboratory, name);
 
         return ResearcherResponseDto.from(researcherRepository.save(researcher));
     }

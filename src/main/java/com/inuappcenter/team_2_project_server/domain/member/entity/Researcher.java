@@ -23,21 +23,26 @@ public class Researcher {
     Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "laboratory_id")
+    @JoinColumn(name = "laboratory_id", nullable = false)
     Laboratory laboratory;
+
+    String name;
 
     private Researcher(
             Member member,
-            Laboratory laboratory
+            Laboratory laboratory,
+            String name
     ) {
         this.member = member;
         this.laboratory = laboratory;
+        this.name = name;
     }
 
     public static Researcher create(
             Member member,
-            Laboratory laboratory
+            Laboratory laboratory,
+            String name
     ) {
-        return new Researcher(member, laboratory);
+        return new Researcher(member, laboratory, name);
     }
 }

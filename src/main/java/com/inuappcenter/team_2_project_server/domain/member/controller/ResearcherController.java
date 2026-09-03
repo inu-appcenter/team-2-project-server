@@ -25,7 +25,8 @@ public class ResearcherController {
     ) {
         ResearcherResponseDto response = researcherService.register(
                 request.memberId(),
-                request.laboratoryId()
+                request.laboratoryId(),
+                request.name()
         );
 
         return ResponseEntity.ok(
