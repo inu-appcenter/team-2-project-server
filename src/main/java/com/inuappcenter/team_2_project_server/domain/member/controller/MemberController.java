@@ -97,4 +97,17 @@ public class MemberController implements MemberApiSpecification {
         log.info(member.getId() + " 유저가 삭제되었습니다.");
         return ResponseEntity.ok(ResponseDto.of(member.getId(), "유저 삭제 성공"));
     }
+
+    /**
+     * 온보딩 완료 처리 컨트롤러 - isNew 를 false 로 내린다
+     */
+    @Override
+    @PatchMapping("/is-new")
+    public ResponseEntity<ResponseDto<MemberResponseDto>> updateIsNew(
+            @AuthenticationPrincipal Member member
+    ) {
+        MemberResponseDto response = memberService.completeOnboarding(member.getId());
+
+        return ResponseEntity.ok(ResponseDto.of(response, "온보딩 완료 처리 성공"));
+    }
 }

@@ -11,19 +11,21 @@ public record MemberResponseDto(
         String nickName,
         Department department,
         String email,
-        LocalDateTime last_login_at
+        LocalDateTime lastLoginAt,
+        boolean isNew
 ) {
     // 엔티티는 Dto로 바꾸는 정적 팩토리 메서드
     public static MemberResponseDto from(
-            Member savedMember
+            Member member
     ) {
         return new MemberResponseDto(
-                savedMember.getId(),
-                savedMember.getStudentNumber(),
-                savedMember.getNickName(),
-                savedMember.getDepartment(),
-                savedMember.getEmail(),
-                savedMember.getLastLoginAt()
+                member.getId(),
+                member.getStudentNumber(),
+                member.getNickName(),
+                member.getDepartment(),
+                member.getEmail(),
+                member.getLastLoginAt(),
+                member.isNew()
         );
     }
 }

@@ -25,7 +25,14 @@ import java.util.List;
 @Tag(name = "회원", description = "회원 인증 및 프로필 관리 API")
 public interface MemberApiSpecification {
 
-    @Operation(summary = "로그인", description = "학번과 비밀번호로 로그인하고 JWT 토큰을 발급합니다.")
+    @Operation(
+            summary = "로그인",
+            description = """
+                    학번과 비밀번호로 로그인하고 JWT 토큰을 발급합니다.
+                    미가입 학번이면 회원을 생성하며 이 경우 isNew=true 로 내려갑니다.
+                    isNew 는 온보딩 미완료 여부이며, 온보딩을 마치면 PATCH /api/member/is-new 로 내립니다.
+                    """
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -39,7 +46,9 @@ public interface MemberApiSpecification {
                                         "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
                                         "refreshToken": "eyJhbGciOiJIUzI1NiJ9...",
                                         "accessTokenExpiresAt": "2026-08-18T12:00:00",
-                                        "refreshTokenExpiresAt": "2026-08-25T12:00:00"
+                                        "refreshTokenExpiresAt": "2026-08-25T12:00:00",
+                                        "memberId": 1,
+                                        "isNew": true
                                       },
                                       "code": null,
                                       "message": "로그인 성공"
@@ -98,7 +107,8 @@ public interface MemberApiSpecification {
                                         "nickName": "홍길동",
                                         "department": "COMPUTER_ENGINEERING",
                                         "email": "student@example.com",
-                                        "last_login_at": "2026-08-18T12:00:00"
+                                        "lastLoginAt": "2026-08-18T12:00:00",
+                                        "isNew": true
                                       },
                                       "code": null,
                                       "message": "유저 생성 성공"
@@ -142,7 +152,8 @@ public interface MemberApiSpecification {
                                   "nickName": "홍길동",
                                   "department": "COMPUTER_ENGINEERING",
                                   "email": "student@example.com",
-                                  "last_login_at": "2026-08-18T12:00:00"
+                                  "lastLoginAt": "2026-08-18T12:00:00",
+                                  "isNew": false
                                 }
                               ],
                               "code": null,
@@ -169,7 +180,8 @@ public interface MemberApiSpecification {
                                         "nickName": "홍길동",
                                         "department": "COMPUTER_ENGINEERING",
                                         "email": "student@example.com",
-                                        "last_login_at": "2026-08-18T12:00:00"
+                                        "lastLoginAt": "2026-08-18T12:00:00",
+                                        "isNew": false
                                       },
                                       "code": null,
                                       "message": "유저 조회 성공"
@@ -213,7 +225,8 @@ public interface MemberApiSpecification {
                                         "nickName": "새닉네임",
                                         "department": "COMPUTER_ENGINEERING",
                                         "email": "new-email@example.com",
-                                        "last_login_at": "2026-08-18T12:00:00"
+                                        "lastLoginAt": "2026-08-18T12:00:00",
+                                        "isNew": false
                                       },
                                       "code": null,
                                       "message": "유저 프로필 수정 성공"
@@ -306,6 +319,72 @@ public interface MemberApiSpecification {
             )
     })
     ResponseEntity<ResponseDto<Long>> deleteMember(
+            @AuthenticationPrincipal Member member
+    );
+
+    @Operation(
+            summary = "온보딩 완료 처리",
+            description = """
+                    인증된 유저의 isNew 플래그를 false 로 내립니다.
+                    프론트에서 온보딩 절차를 마친 뒤 한 번 호출합니다. 요청 본문은 없습니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "온보딩 완료 처리 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": {
+                                        "id": 1,
+                                        "studentNumber": "20240001",
+                                        "nickName": "홍길동",
+                                        "department": "COMPUTER_ENGINEERING",
+                                        "email": "student@example.com",
+                                        "lastLoginAt": "2026-08-18T12:00:00",
+                                        "isNew": false
+                                      },
+                                      "code": null,
+                                      "message": "온보딩 완료 처리 성공"
+                                    }
+                                    """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증 토큰 누락, 만료 또는 유효하지 않은 토큰",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": null,
+                                      "code": "TOKEN_INVALID",
+                                      "message": "유효하지 않은 토큰입니다."
+                                    }
+                                    """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 유저",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "data": null,
+                                      "code": "MEMBER_NOT_FOUND",
+                                      "message": "존재하지 않는 유저입니다."
+                                    }
+                                    """)
+                    )
+            )
+    })
+    ResponseEntity<ResponseDto<MemberResponseDto>> updateIsNew(
             @AuthenticationPrincipal Member member
     );
 }
