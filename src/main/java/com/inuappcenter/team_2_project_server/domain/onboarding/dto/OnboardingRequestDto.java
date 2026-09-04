@@ -17,7 +17,6 @@ public record OnboardingRequestDto(
         VisitPurpose purpose,
 
         // ---- purpose = RESEARCHER 일 때만 사용 ----
-        String name,                 // 실명 (신원 확인용)
         Long laboratoryId,           // 소속 연구실
         String coreTime,             // "있음" / "없음"
         String weeklyMeeting,        // "주 1회" 등
@@ -29,13 +28,12 @@ public record OnboardingRequestDto(
         String contactValue
 ) {
 
-    @AssertTrue(message = "연구생 온보딩에는 이름, 연구실, 코어타임, 미팅 빈도, 하는 일이 모두 필요합니다.")
+    @AssertTrue(message = "연구생 온보딩에는 연구실, 코어타임, 미팅 빈도, 하는 일이 모두 필요합니다.")
     public boolean isResearcherFieldsPresent() {
         if (purpose != VisitPurpose.RESEARCHER) {
             return true;
         }
-        return name != null && !name.isBlank()
-                && laboratoryId != null
+        return laboratoryId != null
                 && coreTime != null && !coreTime.isBlank()
                 && weeklyMeeting != null && !weeklyMeeting.isBlank()
                 && doings != null && !doings.isEmpty();

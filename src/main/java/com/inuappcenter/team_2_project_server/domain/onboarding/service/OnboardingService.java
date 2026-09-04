@@ -40,8 +40,8 @@ public class OnboardingService {
         }
 
         if (request.purpose() == VisitPurpose.RESEARCHER) {
-            // 연구자 등록
-            researcherService.register(memberId, request.laboratoryId(), request.name());
+            // 연구자 등록 (온보딩에서는 실명을 받지 않으므로 name 은 null)
+            researcherService.register(memberId, request.laboratoryId(), null);
 
             // 연구실 리뷰 작성
             labReviewService.submit(memberId, new LabReviewRequestDto(

@@ -26,7 +26,7 @@ public interface OnboardingApiSpecification {
                     전체가 하나의 트랜잭션이라 도중에 하나라도 실패하면 아무것도 저장되지 않습니다.
 
                     - purpose = RESEARCHER: 소속 연구실로 연구자 등록 + 연구실 리뷰 저장, coffeeChatAllowed 가 true 면 커피챗까지 생성
-                    - purpose = EXPLORER: 별도 저장 없이 온보딩만 완료 (name/laboratoryId 등은 무시)
+                    - purpose = EXPLORER: 별도 저장 없이 온보딩만 완료 (laboratoryId 등 나머지 필드는 무시)
 
                     coreTime / weeklyMeeting / doings 는 연구실 리뷰 기본 선택지 값을 그대로 보냅니다. ("있음", "주 1회" 등)
                     커피챗 연락처는 EMAIL 형식이거나 https://open.kakao.com/ 로 시작하는 링크여야 합니다.
@@ -41,7 +41,6 @@ public interface OnboardingApiSpecification {
                             @ExampleObject(name = "연구생 + 커피챗 허용", value = """
                                     {
                                       "purpose": "RESEARCHER",
-                                      "name": "홍길동",
                                       "laboratoryId": 465,
                                       "coreTime": "있음",
                                       "weeklyMeeting": "주 1회",
@@ -54,7 +53,6 @@ public interface OnboardingApiSpecification {
                             @ExampleObject(name = "연구생 + 커피챗 미허용", value = """
                                     {
                                       "purpose": "RESEARCHER",
-                                      "name": "홍길동",
                                       "laboratoryId": 465,
                                       "coreTime": "없음",
                                       "weeklyMeeting": "격주",
