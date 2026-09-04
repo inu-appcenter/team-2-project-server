@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +29,7 @@ public class Member extends BaseEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     Long id;
-    
+
     @Column(name = "student_number", nullable = false, unique = true)
     String studentNumber;
 
@@ -45,6 +46,10 @@ public class Member extends BaseEntity implements UserDetails {
 
     @Column(name = "last_login_at")
     LocalDateTime lastLoginAt;
+
+    @Column(name = "is_new", nullable = false)
+    @ColumnDefault("false")
+    boolean isNew = true;
 
     String role;
 
@@ -137,5 +142,13 @@ public class Member extends BaseEntity implements UserDetails {
         if (email != null) {
             this.email = email;
         }
+    }
+
+    public void updateIsNew() {
+        this.isNew = false;
+    }
+
+    public void recordLogin() {
+        this.lastLoginAt = LocalDateTime.now();
     }
 }
