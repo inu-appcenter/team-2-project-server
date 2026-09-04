@@ -51,14 +51,19 @@ public class MemberService {
                         )
                 ));
 
+        member.recordLogin();
+
         String accessToken = jwtTokenProvider.createAccessToken(member);
         String refreshToken = jwtTokenProvider.createRefreshToken(member);
 
+        // isNew 는 온보딩 완료 여부. 완료 시 프론트가 PATCH /api/member/is-new 로 내린다
         return new LoginResponseDto(
                 accessToken,
                 refreshToken,
                 jwtTokenProvider.getAccessTokenExpiresAt().toString(),
-                jwtTokenProvider.getRefreshTokenExpiresAt().toString()
+                jwtTokenProvider.getRefreshTokenExpiresAt().toString(),
+                member.getId(),
+                member.isNew()
         );
     }
 
@@ -137,5 +142,18 @@ public class MemberService {
                 .orElseThrow(() -> new MyException(ErrorCode.MEMBER_NOT_FOUND));
 
         memberRepository.delete(member);
+    }
+
+    /**
+     * 온보딩 완료 처리 - isNew 플래그를 내린다. 프론트가 온보딩 마지막 단계에서 호출
+     */
+    @Transactional
+    public MemberResponseDto completeOnboarding(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MyException(ErrorCode.MEMBER_NOT_FOUND));
+
+        member.updateIsNew();
+
+        return MemberResponseDto.from(member);
     }
 }
