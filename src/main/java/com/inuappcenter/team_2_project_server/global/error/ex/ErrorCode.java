@@ -40,6 +40,7 @@ public enum ErrorCode {
     INVALID_RESEARCHER(HttpStatus.BAD_REQUEST, "INVALID_RESEARCHER", "인증된 연구자가 아닙니다."),
     LAB_REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "LAB_REVIEW_ALREADY_EXIST", "해당 연구자의 랩리뷰가 이미 존재합니다."),
     LAB_REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "LAB_REVIEW_NOT_FOUND", "존재하지 않는 연구실 리뷰입니다."),
+    ONBOARDING_ALREADY_DONE(HttpStatus.BAD_REQUEST, "ONBOARDING_ALREADY_DONE", "이미 온보딩을 완료했습니다."),
     ;
 
     private final HttpStatus status;
