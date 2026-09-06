@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
 
                         // 최우선 허용
-                        .requestMatchers("/api/member/login").permitAll()
+                        .requestMatchers("/api/member/login", "/api/member/reissue").permitAll()
 
                         // 인증이 필요없는 API
                         .requestMatchers(HttpMethod.GET, "/api/laboratory/**").permitAll()
