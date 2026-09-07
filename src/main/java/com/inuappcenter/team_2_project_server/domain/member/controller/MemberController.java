@@ -3,6 +3,7 @@ package com.inuappcenter.team_2_project_server.domain.member.controller;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.LoginRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.MemberCreateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.MemberUpdateRequestDto;
+import com.inuappcenter.team_2_project_server.domain.member.dto.request.TokenReissueRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.LoginResponseDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.MemberResponseDto;
 import com.inuappcenter.team_2_project_server.domain.member.entity.Member;
@@ -37,6 +38,20 @@ public class MemberController implements MemberApiSpecification {
 
         return ResponseEntity.ok(
                 ResponseDto.of(response, "로그인 성공")
+        );
+    }
+
+    /**
+     * 토큰 재발급 컨트롤러
+     */
+    @PostMapping("/reissue")
+    public ResponseEntity<ResponseDto<LoginResponseDto>> reissue(
+            @Valid @RequestBody TokenReissueRequestDto request
+    ) {
+        LoginResponseDto response = memberService.reissue(request);
+
+        return ResponseEntity.ok(
+                ResponseDto.of(response, "토큰 재발급 성공")
         );
     }
 

@@ -16,20 +16,20 @@ public class CoffeeChat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "coffee_chat_id")
-    Long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "laboratory_id")
-    Laboratory laboratory;
+    private Laboratory laboratory;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "researcher_id", unique = true)
-    Researcher researcher;
+    private Researcher researcher;
 
     @Enumerated(EnumType.STRING)
-    ContactType contactType;
+    private ContactType contactType;
 
-    String contactValue;
+    private String contactValue;
 
     private CoffeeChat(
             Laboratory laboratory,

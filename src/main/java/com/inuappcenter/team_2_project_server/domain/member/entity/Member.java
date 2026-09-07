@@ -28,30 +28,30 @@ public class Member extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    Long id;
+    private Long id;
 
     @Column(name = "student_number", nullable = false, unique = true)
-    String studentNumber;
+    private String studentNumber;
 
     @Column(name = "nickname")
-    String nickName;
+    private String nickName;
 
     @Enumerated(EnumType.STRING)
-    College college;
+    private College college;
 
     @Enumerated(EnumType.STRING)
-    Department department;
+    private Department department;
 
-    String email;
+    private String email;
 
     @Column(name = "last_login_at")
-    LocalDateTime lastLoginAt;
+    private LocalDateTime lastLoginAt;
 
     @Column(name = "is_new", nullable = false)
     @ColumnDefault("false")
-    boolean isNew = true;
+    private boolean isNew = true;
 
-    String role;
+    private String role;
 
     private Member(
             String studentNumber,

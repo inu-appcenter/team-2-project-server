@@ -28,27 +28,27 @@ public class LabReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lab_review_id")
-    Long id;
+    private Long id;
 
     @JoinColumn(name = "laboratory_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    Laboratory laboratory;
+    private Laboratory laboratory;
 
     @JoinColumn(name = "researcher_id", unique = true, nullable = false)
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    Researcher researcher;
+    private Researcher researcher;
 
     @Column(name = "core_time")
-    String coreTime;
+    private String coreTime;
 
     @Column(name = "weekly_meeting")
-    String weeklyMeeting;
+    private String weeklyMeeting;
 
     @ElementCollection
     @CollectionTable(name = "lab_review_doings",
             joinColumns = @JoinColumn(name = "lab_review_id"))
     @Column(name = "doings")
-    Set<String> doings = new LinkedHashSet<>();
+    private Set<String> doings = new LinkedHashSet<>();
 
     private LabReview(
             Laboratory laboratory,
