@@ -56,6 +56,20 @@ public class MemberController implements MemberApiSpecification {
     }
 
     /**
+     * 로그아웃 컨트롤러
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseDto<Long>> logout(
+            @AuthenticationPrincipal Member member
+    ) {
+        memberService.logout(member.getId());
+
+        return ResponseEntity.ok(
+                ResponseDto.of(member.getId(), "로그아웃 성공")
+        );
+    }
+
+    /**
      * 유저 생성 컨트롤러
      */
     @PostMapping()
