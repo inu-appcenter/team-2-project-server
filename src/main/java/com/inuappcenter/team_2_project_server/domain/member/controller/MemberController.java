@@ -3,6 +3,7 @@ package com.inuappcenter.team_2_project_server.domain.member.controller;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.LoginRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.MemberCreateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.MemberUpdateRequestDto;
+import com.inuappcenter.team_2_project_server.domain.member.dto.request.TokenReissueRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.LoginResponseDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.MemberResponseDto;
 import com.inuappcenter.team_2_project_server.domain.member.entity.Member;
@@ -37,6 +38,34 @@ public class MemberController implements MemberApiSpecification {
 
         return ResponseEntity.ok(
                 ResponseDto.of(response, "로그인 성공")
+        );
+    }
+
+    /**
+     * 토큰 재발급 컨트롤러
+     */
+    @PostMapping("/reissue")
+    public ResponseEntity<ResponseDto<LoginResponseDto>> reissue(
+            @Valid @RequestBody TokenReissueRequestDto request
+    ) {
+        LoginResponseDto response = memberService.reissue(request);
+
+        return ResponseEntity.ok(
+                ResponseDto.of(response, "토큰 재발급 성공")
+        );
+    }
+
+    /**
+     * 로그아웃 컨트롤러
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseDto<Long>> logout(
+            @AuthenticationPrincipal Member member
+    ) {
+        memberService.logout(member.getId());
+
+        return ResponseEntity.ok(
+                ResponseDto.of(member.getId(), "로그아웃 성공")
         );
     }
 
@@ -96,18 +125,5 @@ public class MemberController implements MemberApiSpecification {
         memberService.deleteMember(member.getId());
         log.info(member.getId() + " 유저가 삭제되었습니다.");
         return ResponseEntity.ok(ResponseDto.of(member.getId(), "유저 삭제 성공"));
-    }
-
-    /**
-     * 온보딩 완료 처리 컨트롤러 - isNew 를 false 로 내린다
-     */
-    @Override
-    @PatchMapping("/is-new")
-    public ResponseEntity<ResponseDto<MemberResponseDto>> updateIsNew(
-            @AuthenticationPrincipal Member member
-    ) {
-        MemberResponseDto response = memberService.completeOnboarding(member.getId());
-
-        return ResponseEntity.ok(ResponseDto.of(response, "온보딩 완료 처리 성공"));
     }
 }

@@ -14,36 +14,36 @@ public class Publication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "publication_id")
-    Long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "laboratory_id")
-    Laboratory laboratory;
+    private Laboratory laboratory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professor_id")
-    Professor professor;
+    private Professor professor;
 
     // 논문 제목은 부제/영문 제목 등으로 255자를 쉽게 넘겨서 길이 제한 없이 저장
     @Column(columnDefinition = "TEXT")
-    String title;
+    private String title;
 
     // 공저자가 많으면 목록이 255자를 넘길 수 있어서 길이 제한 없이 저장
     @Column(name = "researchers_raw", columnDefinition = "TEXT")
-    String researchersRaw;
+    private String researchersRaw;
 
-    String platform;
+    private String platform;
 
-    String year;
+    private String year;
 
-    String type;
+    private String type;
 
-    String status;
+    private String status;
 
-    String doi;
+    private String doi;
 
     @Column(name = "source_url")
-    String sourceURL;
+    private String sourceURL;
 
     private Publication(
             Laboratory laboratory,

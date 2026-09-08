@@ -28,30 +28,34 @@ public class Member extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    Long id;
+    private Long id;
 
     @Column(name = "student_number", nullable = false, unique = true)
-    String studentNumber;
+    private String studentNumber;
 
     @Column(name = "nickname")
-    String nickName;
+    private String nickName;
 
     @Enumerated(EnumType.STRING)
-    College college;
+    private College college;
 
     @Enumerated(EnumType.STRING)
-    Department department;
+    private Department department;
 
-    String email;
+    private String email;
 
     @Column(name = "last_login_at")
-    LocalDateTime lastLoginAt;
+    private LocalDateTime lastLoginAt;
 
     @Column(name = "is_new", nullable = false)
     @ColumnDefault("false")
-    boolean isNew = true;
+    private boolean isNew = true;
 
-    String role;
+    // 이 시각 이전에 발급된(iat) 토큰은 무효로 본다. 로그아웃 시 now() 로 갱신. null 이면 무효화 이력 없음
+    @Column(name = "token_invalid_before")
+    private LocalDateTime tokenInvalidBefore;
+
+    private String role;
 
     private Member(
             String studentNumber,
@@ -150,5 +154,10 @@ public class Member extends BaseEntity implements UserDetails {
 
     public void recordLogin() {
         this.lastLoginAt = LocalDateTime.now();
+    }
+
+    // 로그아웃: 지금까지 발급된 모든 access/refresh 토큰을 무효화한다
+    public void logout() {
+        this.tokenInvalidBefore = LocalDateTime.now();
     }
 }

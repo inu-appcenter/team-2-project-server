@@ -23,38 +23,29 @@ import lombok.NoArgsConstructor;
 )
 public class Laboratory extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "laboratory_id")
-    Long id;
-
-    @Enumerated(EnumType.STRING)
-    College college;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    Department department;
-
-    @Column(name = "lab_name", nullable = false)
-    String labName;
-
-    String location;
-
-    Integer graduateStudentCount;
-    Integer undergraduateStudentCount;
-
-    String introduction;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professor_id")
     Professor professor;
-
     @Column(name = "lab_url")
     String labUrl;
-
     // 엑셀 원문을 그대로 저장
     @Column(name = "research_field_raw")
     String researchFieldRaw;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "laboratory_id")
+    private Long id;
+    @Enumerated(EnumType.STRING)
+    private College college;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Department department;
+    @Column(name = "lab_name", nullable = false)
+    private String labName;
+    private String location;
+    private Integer graduateStudentCount;
+    private Integer undergraduateStudentCount;
+    private String introduction;
 
     private Laboratory(
             College college,
