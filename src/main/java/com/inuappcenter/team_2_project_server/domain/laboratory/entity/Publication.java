@@ -1,6 +1,7 @@
 package com.inuappcenter.team_2_project_server.domain.laboratory.entity;
 
 import com.inuappcenter.team_2_project_server.domain.member.entity.Professor;
+import com.inuappcenter.team_2_project_server.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table
-public class Publication {
+public class Publication extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "publication_id")
