@@ -51,6 +51,10 @@ public class Member extends BaseEntity implements UserDetails {
     @ColumnDefault("false")
     private boolean isNew = true;
 
+    // 이 시각 이전에 발급된(iat) 토큰은 무효로 본다. 로그아웃 시 now() 로 갱신. null 이면 무효화 이력 없음
+    @Column(name = "token_invalid_before")
+    private LocalDateTime tokenInvalidBefore;
+
     private String role;
 
     private Member(
@@ -150,5 +154,10 @@ public class Member extends BaseEntity implements UserDetails {
 
     public void recordLogin() {
         this.lastLoginAt = LocalDateTime.now();
+    }
+
+    // 로그아웃: 지금까지 발급된 모든 access/refresh 토큰을 무효화한다
+    public void logout() {
+        this.tokenInvalidBefore = LocalDateTime.now();
     }
 }
