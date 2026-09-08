@@ -1,6 +1,7 @@
 package com.inuappcenter.team_2_project_server.domain.laboratory.entity;
 
 import com.inuappcenter.team_2_project_server.domain.member.entity.Researcher;
+import com.inuappcenter.team_2_project_server.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table
-public class LabReview {
+public class LabReview extends BaseEntity {
 
     public static final List<String> CORE_TIME = List.of("있음", "없음", "자율");
     public static final List<String> WEEKLY_MEETING = List.of("주 1회", "주 2회 이상", "격주", "월 1회", "비정기", "없음");

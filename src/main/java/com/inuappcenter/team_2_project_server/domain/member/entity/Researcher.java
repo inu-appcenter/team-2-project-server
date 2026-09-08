@@ -1,6 +1,7 @@
 package com.inuappcenter.team_2_project_server.domain.member.entity;
 
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.Laboratory;
+import com.inuappcenter.team_2_project_server.global.entity.BaseEntity;
 import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
 import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table
-public class Researcher {
+public class Researcher extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
