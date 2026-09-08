@@ -4,6 +4,7 @@ import com.inuappcenter.team_2_project_server.domain.member.dto.LocalAuthLoginDt
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.LoginRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.MemberCreateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.request.MemberUpdateRequestDto;
+import com.inuappcenter.team_2_project_server.domain.member.dto.request.TokenReissueRequestDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.LoginResponseDto;
 import com.inuappcenter.team_2_project_server.domain.member.dto.response.MemberResponseDto;
 import com.inuappcenter.team_2_project_server.domain.member.entity.Member;
@@ -56,7 +57,7 @@ public class MemberService {
         String accessToken = jwtTokenProvider.createAccessToken(member);
         String refreshToken = jwtTokenProvider.createRefreshToken(member);
 
-        // isNew 는 온보딩 완료 여부. 완료 시 프론트가 PATCH /api/member/is-new 로 내린다
+        // isNew 는 온보딩 미완료 여부. 온보딩(POST /api/onboarding)을 마치면 false 로 내려간다
         return new LoginResponseDto(
                 accessToken,
                 refreshToken,
@@ -145,15 +146,45 @@ public class MemberService {
     }
 
     /**
-     * 온보딩 완료 처리 - isNew 플래그를 내린다. 프론트가 온보딩 마지막 단계에서 호출
+     * accessToken 재발급
+     * refreshToken 을 검증하고, 새 accessToken 과 refreshToken 을 함께 재발급한다. (refresh 회전)
+     * 서버에 토큰 저장소가 없어(stateless) 기존 refreshToken 은 만료 전까지는 여전히 유효하다.
      */
-    @Transactional
-    public MemberResponseDto completeOnboarding(Long memberId) {
+    public LoginResponseDto reissue(TokenReissueRequestDto request) {
+        String refreshToken = request.refreshToken();
+
+        jwtTokenProvider.validateRefreshToken(refreshToken);
+
+        Long memberId = jwtTokenProvider.getMemberId(refreshToken);
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MyException(ErrorCode.MEMBER_NOT_FOUND));
 
-        member.updateIsNew();
+        // 로그아웃 후의 refreshToken 재사용 차단
+        jwtTokenProvider.validateTokenNotRevoked(refreshToken, member.getTokenInvalidBefore());
 
-        return MemberResponseDto.from(member);
+        String newAccessToken = jwtTokenProvider.createAccessToken(member);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(member);
+
+        return new LoginResponseDto(
+                newAccessToken,
+                newRefreshToken,
+                jwtTokenProvider.getAccessTokenExpiresAt().toString(),
+                jwtTokenProvider.getRefreshTokenExpiresAt().toString(),
+                member.getId(),
+                member.isNew()
+        );
+    }
+
+    /**
+     * 로그아웃
+     * 회원의 tokenInvalidBefore 를 현재 시각으로 갱신하여, 지금까지 발급된
+     * access/refresh 토큰을 즉시 무효화한다. (전 기기 로그아웃)
+     */
+    @Transactional
+    public void logout(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MyException(ErrorCode.MEMBER_NOT_FOUND));
+
+        member.logout();
     }
 }
