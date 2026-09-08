@@ -115,7 +115,7 @@ public class JwtTokenProvider {
 
 
     /**
-     * 토큰 검증 메서드
+     * accessToken 검증 메서드 (서명/형식/만료 + tokenType 이 ACCESS 인지)
      */
     public void validateAccessToken(String token) {
         Claims claims = parseClaims(token);
@@ -123,6 +123,37 @@ public class JwtTokenProvider {
         String tokenType = claims.get(TOKEN_TYPE_CLAIM, String.class);
         if (!ACCESS_TOKEN_TYPE.equals(tokenType)) {
             throw new MyException(ErrorCode.TOKEN_INVALID);
+        }
+    }
+
+    /**
+     * refreshToken 검증 메서드 (서명/형식/만료 + tokenType 이 REFRESH 인지)
+     * access token 재발급 시에만 사용한다
+     */
+    public void validateRefreshToken(String token) {
+        Claims claims = parseClaims(token);
+
+        String tokenType = claims.get(TOKEN_TYPE_CLAIM, String.class);
+        if (!REFRESH_TOKEN_TYPE.equals(tokenType)) {
+            throw new MyException(ErrorCode.TOKEN_INVALID);
+        }
+    }
+
+    /**
+     * 로그아웃 등으로 무효화된 토큰인지 검증한다.
+     * 토큰의 발급시각(iat)이 회원의 tokenInvalidBefore 보다 이전이면 무효.
+     * tokenInvalidBefore 가 null 이면(무효화 이력 없음) 통과.
+     */
+    public void validateTokenNotRevoked(String token, LocalDateTime tokenInvalidBefore) {
+        if (tokenInvalidBefore == null) {
+            return;
+        }
+
+        Date issuedAt = parseClaims(token).getIssuedAt();
+        Instant boundary = tokenInvalidBefore.atZone(ZoneId.systemDefault()).toInstant();
+
+        if (issuedAt == null || issuedAt.toInstant().isBefore(boundary)) {
+            throw new MyException(ErrorCode.TOKEN_REVOKED);
         }
     }
 
