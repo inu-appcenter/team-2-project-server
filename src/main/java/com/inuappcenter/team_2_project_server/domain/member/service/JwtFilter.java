@@ -1,5 +1,6 @@
 package com.inuappcenter.team_2_project_server.domain.member.service;
 
+import com.inuappcenter.team_2_project_server.domain.member.entity.Member;
 import com.inuappcenter.team_2_project_server.global.dto.ResponseDto;
 import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import jakarta.servlet.FilterChain;
@@ -46,6 +47,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 // 회원 id로 실제 회원 정보를 조회
                 UserDetails userDetails = userDetailsService.loadUserByUsername(memberId.toString());
+
+                // 로그아웃 등으로 무효화된 토큰인지 확인 (발급시각 vs tokenInvalidBefore)
+                if (userDetails instanceof Member member) {
+                    jwtTokenProvider.validateTokenNotRevoked(token, member.getTokenInvalidBefore());
+                }
 
                 // Spring Security가 사용할 인증 객체를 생성
                 UsernamePasswordAuthenticationToken authenticationToken =
