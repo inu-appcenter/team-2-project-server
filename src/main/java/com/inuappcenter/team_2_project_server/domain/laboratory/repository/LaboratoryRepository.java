@@ -3,6 +3,9 @@ package com.inuappcenter.team_2_project_server.domain.laboratory.repository;
 import com.inuappcenter.team_2_project_server.domain.department.Department;
 import com.inuappcenter.team_2_project_server.domain.laboratory.entity.Laboratory;
 import com.inuappcenter.team_2_project_server.domain.member.entity.Professor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,8 +18,14 @@ public interface LaboratoryRepository extends JpaRepository<Laboratory, Long> {
 
     boolean existsByLabNameAndProfessorIdAndDepartment(String labName, Long professorId, Department department);
 
-    List<Laboratory> findByLabNameContainingIgnoreCaseOrProfessor_NameContainingIgnoreCase(
+    @EntityGraph(attributePaths = "professor")
+    Page<Laboratory> findByLabNameContainingIgnoreCaseOrProfessor_NameContainingIgnoreCase(
             String labNameKeyword,
-            String professorNameKeyword
+            String professorNameKeyword,
+            Pageable pageable
     );
+
+    @Override
+    @EntityGraph(attributePaths = "professor")
+    Page<Laboratory> findAll(Pageable pageable);
 }

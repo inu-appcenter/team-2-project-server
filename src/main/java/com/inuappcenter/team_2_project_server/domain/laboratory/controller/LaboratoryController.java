@@ -5,15 +5,20 @@ import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.Labo
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.response.LaboratoryResponseDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.service.LaboratoryExcelImportService;
 import com.inuappcenter.team_2_project_server.domain.laboratory.service.LaboratoryService;
+import com.inuappcenter.team_2_project_server.global.dto.PageResponseDto;
 import com.inuappcenter.team_2_project_server.global.dto.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,11 +60,14 @@ public class LaboratoryController implements LaboratoryApiSpecification {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<List<LaboratoryResponseDto>>> getAllLaboratory() {
-        List<LaboratoryResponseDto> responses = laboratoryService.getAllLab();
+    public ResponseEntity<ResponseDto<PageResponseDto<LaboratoryResponseDto>>> getAllLaboratory(
+            @ParameterObject
+            @PageableDefault(size = 20, sort = "labName", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        Page<LaboratoryResponseDto> page = laboratoryService.getAllLab(pageable);
 
         return ResponseEntity.ok(
-                ResponseDto.of(responses, "전체 연구실 조회 성공")
+                ResponseDto.of(PageResponseDto.from(page), "전체 연구실 조회 성공")
         );
     }
 
@@ -86,12 +94,13 @@ public class LaboratoryController implements LaboratoryApiSpecification {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ResponseDto<List<LaboratoryResponseDto>>> searchLaboratory(
-            @RequestParam String keyword
+    public ResponseEntity<ResponseDto<PageResponseDto<LaboratoryResponseDto>>> searchLaboratory(
+            @RequestParam String keyword,
+            @ParameterObject @PageableDefault(size = 20) Pageable pageable
     ) {
-        List<LaboratoryResponseDto> responses = laboratoryService.searchLabs(keyword);
+        Page<LaboratoryResponseDto> page = laboratoryService.searchLabs(keyword, pageable);
         return ResponseEntity.ok(
-                ResponseDto.of(responses, "연구실 검색 성공")
+                ResponseDto.of(PageResponseDto.from(page), "연구실 검색 성공")
         );
     }
 }

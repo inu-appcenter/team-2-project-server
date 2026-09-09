@@ -3,15 +3,21 @@ package com.inuappcenter.team_2_project_server.domain.laboratory.controller;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryCreateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.request.LaboratoryUpdateRequestDto;
 import com.inuappcenter.team_2_project_server.domain.laboratory.dto.response.LaboratoryResponseDto;
+import com.inuappcenter.team_2_project_server.global.dto.PageResponseDto;
 import com.inuappcenter.team_2_project_server.global.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Tag(name = "연구실", description = "연구실 관리 및 편람 엑셀 동기화 API")
 public interface LaboratoryApiSpecification {
@@ -236,7 +240,14 @@ public interface LaboratoryApiSpecification {
             @PathVariable Long laboratoryId
     );
 
-    @Operation(summary = "연구실 전체 조회", description = "등록된 전체 연구실 목록을 조회합니다.")
+    @Operation(
+            summary = "연구실 전체 조회",
+            description = """
+                    등록된 연구실 목록을 페이지 단위로 조회합니다.
+                    page(0-based), size, sort(예: `labName,asc` / `labName,desc`) 쿼리 파라미터를 사용합니다.
+                    기본값은 size=20, labName 오름차순입니다.
+                    """
+    )
     @ApiResponse(
             responseCode = "200",
             description = "전체 연구실 조회 성공",
@@ -245,45 +256,56 @@ public interface LaboratoryApiSpecification {
                     schema = @Schema(implementation = ResponseDto.class),
                     examples = @ExampleObject(value = """
                             {
-                              "data": [
-                                {
-                                  "id": 1,
-                                  "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
-                                  "collegeName": "정보기술대학",
-                                  "department": "COMPUTER_ENGINEERING",
-                                  "departmentName": "컴퓨터공학부",
-                                  "labName": "소프트웨어공학 연구실",
-                                  "location": "7호관 401호",
-                                  "capacity": {
-                                    "graduateStudentCount": 6,
-                                    "undergraduateStudentCount": 7
-                                  },
-                                  "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
-                                  "professor": {
+                              "data": {
+                                "content": [
+                                  {
                                     "id": 1,
-                                    "positionRaw": "교수",
                                     "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
                                     "collegeName": "정보기술대학",
                                     "department": "COMPUTER_ENGINEERING",
                                     "departmentName": "컴퓨터공학부",
-                                    "name": "홍길동",
-                                    "phoneNumber": "032-835-0000",
-                                    "email": "professor@example.com"
-                                  },
-                                  "labUrl": "https://example.com/lab",
-                                  "researchAreas": [
-                                    "소프트웨어공학",
-                                    "인공지능"
-                                  ]
-                                }
-                              ],
+                                    "labName": "소프트웨어공학 연구실",
+                                    "location": "7호관 401호",
+                                    "capacity": {
+                                      "graduateStudentCount": 6,
+                                      "undergraduateStudentCount": 7
+                                    },
+                                    "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
+                                    "professor": {
+                                      "id": 1,
+                                      "positionRaw": "교수",
+                                      "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                      "collegeName": "정보기술대학",
+                                      "department": "COMPUTER_ENGINEERING",
+                                      "departmentName": "컴퓨터공학부",
+                                      "name": "홍길동",
+                                      "phoneNumber": "032-835-0000",
+                                      "email": "professor@example.com"
+                                    },
+                                    "labUrl": "https://example.com/lab",
+                                    "researchAreas": ["소프트웨어공학", "인공지능"]
+                                  }
+                                ],
+                                "page": 0,
+                                "size": 20,
+                                "totalElements": 137,
+                                "totalPages": 7,
+                                "hasNext": true,
+                                "last": false
+                              },
                               "code": null,
                               "message": "전체 연구실 조회 성공"
                             }
                             """)
             )
     )
-    ResponseEntity<ResponseDto<List<LaboratoryResponseDto>>> getAllLaboratory();
+    @Parameter(name = "page", in = ParameterIn.QUERY, description = "0부터 시작하는 페이지 번호", example = "0")
+    @Parameter(name = "size", in = ParameterIn.QUERY, description = "한 페이지에 담을 개수 (기본값 20)", example = "20")
+    @Parameter(name = "sort", in = ParameterIn.QUERY, description = "정렬 조건. `필드명,asc|desc` 형식 (기본값 labName,asc)", example = "labName,asc")
+    ResponseEntity<ResponseDto<PageResponseDto<LaboratoryResponseDto>>> getAllLaboratory(
+            @ParameterObject
+            @PageableDefault(size = 20, sort = "labName", direction = Sort.Direction.ASC) Pageable pageable
+    );
 
     @Operation(
             summary = "연구실 수정",
@@ -415,7 +437,13 @@ public interface LaboratoryApiSpecification {
             @PathVariable Long laboratoryId
     );
 
-    @Operation(summary = "연구실 검색", description = "연구실명 또는 교수명에 검색어가 포함된 연구실 목록을 조회합니다.")
+    @Operation(
+            summary = "연구실 검색",
+            description = """
+                    연구실명 또는 교수명에 검색어가 포함된 연구실을 페이지 단위로 조회합니다.
+                    page(0-based), size, sort 쿼리 파라미터를 사용하며 기본값은 size=20 입니다.
+                    """
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -425,38 +453,43 @@ public interface LaboratoryApiSpecification {
                             schema = @Schema(implementation = ResponseDto.class),
                             examples = @ExampleObject(value = """
                                     {
-                                      "data": [
-                                        {
-                                          "id": 1,
-                                          "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
-                                          "collegeName": "정보기술대학",
-                                          "department": "COMPUTER_ENGINEERING",
-                                          "departmentName": "컴퓨터공학부",
-                                          "labName": "소프트웨어공학 연구실",
-                                          "location": "7호관 401호",
-                                          "capacity": {
-                                            "graduateStudentCount": 6,
-                                            "undergraduateStudentCount": 7
-                                          },
-                                          "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
-                                          "professor": {
+                                      "data": {
+                                        "content": [
+                                          {
                                             "id": 1,
-                                            "positionRaw": "교수",
                                             "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
                                             "collegeName": "정보기술대학",
                                             "department": "COMPUTER_ENGINEERING",
                                             "departmentName": "컴퓨터공학부",
-                                            "name": "홍길동",
-                                            "phoneNumber": "032-835-0000",
-                                            "email": "professor@example.com"
-                                          },
-                                          "labUrl": "https://example.com/lab",
-                                          "researchAreas": [
-                                            "소프트웨어공학",
-                                            "인공지능"
-                                          ]
-                                        }
-                                      ],
+                                            "labName": "소프트웨어공학 연구실",
+                                            "location": "7호관 401호",
+                                            "capacity": {
+                                              "graduateStudentCount": 6,
+                                              "undergraduateStudentCount": 7
+                                            },
+                                            "introduction": "소프트웨어 품질과 개발 프로세스를 연구합니다.",
+                                            "professor": {
+                                              "id": 1,
+                                              "positionRaw": "교수",
+                                              "college": "COLLEGE_OF_INFORMATION_TECHNOLOGY",
+                                              "collegeName": "정보기술대학",
+                                              "department": "COMPUTER_ENGINEERING",
+                                              "departmentName": "컴퓨터공학부",
+                                              "name": "홍길동",
+                                              "phoneNumber": "032-835-0000",
+                                              "email": "professor@example.com"
+                                            },
+                                            "labUrl": "https://example.com/lab",
+                                            "researchAreas": ["소프트웨어공학", "인공지능"]
+                                          }
+                                        ],
+                                        "page": 0,
+                                        "size": 20,
+                                        "totalElements": 3,
+                                        "totalPages": 1,
+                                        "hasNext": false,
+                                        "last": true
+                                      },
                                       "code": null,
                                       "message": "연구실 검색 성공"
                                     }
@@ -479,8 +512,13 @@ public interface LaboratoryApiSpecification {
                     )
             )
     })
-    ResponseEntity<ResponseDto<List<LaboratoryResponseDto>>> searchLaboratory(
+    @Parameter(name = "page", in = ParameterIn.QUERY, description = "0부터 시작하는 페이지 번호", example = "0")
+    @Parameter(name = "size", in = ParameterIn.QUERY, description = "한 페이지에 담을 개수 (기본값 20)", example = "20")
+    @Parameter(name = "sort", in = ParameterIn.QUERY, description = "정렬 조건. `필드명,asc|desc` 형식 (예: labName,desc)", example = "labName,asc")
+    ResponseEntity<ResponseDto<PageResponseDto<LaboratoryResponseDto>>> searchLaboratory(
             @Parameter(description = "연구실명 또는 교수명 검색어", required = true, example = "홍길동")
-            @RequestParam String keyword
+            @RequestParam String keyword,
+            @ParameterObject
+            @PageableDefault(size = 20) Pageable pageable
     );
 }
