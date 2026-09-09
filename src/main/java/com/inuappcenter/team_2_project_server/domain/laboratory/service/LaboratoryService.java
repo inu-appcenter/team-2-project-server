@@ -12,9 +12,11 @@ import com.inuappcenter.team_2_project_server.global.error.ex.ErrorCode;
 import com.inuappcenter.team_2_project_server.global.error.ex.MyException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,10 +78,9 @@ public class LaboratoryService {
      * 연구실 전제 조회 메서드
      */
     @Transactional(readOnly = true)
-    public List<LaboratoryResponseDto> getAllLab() {
-        return laboratoryRepository.findAll().stream()
-                .map(LaboratoryResponseDto::from)
-                .toList();
+    public Page<LaboratoryResponseDto> getAllLab(Pageable pageable) {
+        return laboratoryRepository.findAll(pageable)
+                .map(LaboratoryResponseDto::from);
     }
 
     /**
@@ -134,16 +135,14 @@ public class LaboratoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<LaboratoryResponseDto> searchLabs(String keyword) {
+    public Page<LaboratoryResponseDto> searchLabs(String keyword, Pageable pageable) {
         if (keyword == null || keyword.isBlank()) {
             throw new MyException(ErrorCode.INVALID_SEARCH_KEYWORD);
         }
 
         String trimmedKeyword = keyword.trim();
 
-        return laboratoryRepository.findByLabNameContainingIgnoreCaseOrProfessor_NameContainingIgnoreCase(trimmedKeyword, trimmedKeyword)
-                .stream()
-                .map(LaboratoryResponseDto::from)
-                .toList();
+        return laboratoryRepository.findByLabNameContainingIgnoreCaseOrProfessor_NameContainingIgnoreCase(trimmedKeyword, trimmedKeyword, pageable)
+                .map(LaboratoryResponseDto::from);
     }
 }
