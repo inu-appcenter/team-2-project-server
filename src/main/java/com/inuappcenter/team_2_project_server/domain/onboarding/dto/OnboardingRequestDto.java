@@ -16,14 +16,14 @@ public record OnboardingRequestDto(
         @NotNull
         VisitPurpose purpose,
 
-        // ---- purpose = RESEARCHER 일 때만 사용 ----
+        // purpose = RESEARCHER 일 때만 사용
         Long laboratoryId,           // 소속 연구실
         String coreTime,             // "있음" / "없음"
         String weeklyMeeting,        // "주 1회" 등
         Set<String> doings,          // 주로 하는 일 (최대 3개, 프론트에서 제한)
 
-        // ---- 커피챗 (RESEARCHER 이면서 허용한 경우에만) ----
-        boolean coffeeChatAllowed,
+        // 커피챗 (RESEARCHER 이면서 허용한 경우에만)
+        Boolean coffeeChatAllowed,
         ContactType contactType,
         String contactValue
 ) {
@@ -41,7 +41,8 @@ public record OnboardingRequestDto(
 
     @AssertTrue(message = "커피챗을 허용하면 연락처 유형과 값이 필요합니다.")
     public boolean isCoffeeChatContactPresent() {
-        if (!coffeeChatAllowed) {
+        if (purpose != VisitPurpose.RESEARCHER
+                || !Boolean.TRUE.equals(coffeeChatAllowed)) {
             return true;
         }
         return contactType != null && contactValue != null && !contactValue.isBlank();
@@ -49,7 +50,9 @@ public record OnboardingRequestDto(
 
     @AssertTrue(message = "contactType에 맞는 형식의 연락처를 입력해주세요.")
     public boolean isCoffeeChatContactFormatValid() {
-        if (!coffeeChatAllowed || contactType == null || contactValue == null) {
+        if (purpose != VisitPurpose.RESEARCHER
+                || !Boolean.TRUE.equals(coffeeChatAllowed)
+                || contactType == null || contactValue == null) {
             return true;
         }
         return switch (contactType) {

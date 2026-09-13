@@ -39,6 +39,7 @@ public class OnboardingService {
             throw new MyException(ErrorCode.ONBOARDING_ALREADY_DONE);
         }
 
+        // 학부연구생이라면 아래 로직을 거침
         if (request.purpose() == VisitPurpose.RESEARCHER) {
             // 연구자 등록 (온보딩에서는 실명을 받지 않으므로 name 은 null)
             researcherService.register(memberId, request.laboratoryId(), null);
@@ -51,7 +52,7 @@ public class OnboardingService {
             ));
 
             // 커피챗 작성
-            if (request.coffeeChatAllowed()) {
+            if (Boolean.TRUE.equals(request.coffeeChatAllowed())) {
                 coffeeChatService.createCoffeeChat(memberId, new CoffeeChatCreateRequestDto(
                         request.laboratoryId(),
                         request.contactType(),
@@ -60,7 +61,7 @@ public class OnboardingService {
             }
         }
 
-        // EXPLORER 는 별도 저장 없이 온보딩만 완료 처리
+        // EXPLORER는 바로 온보딩 완료 처리
         member.updateIsNew();
 
         return MemberResponseDto.from(member);
